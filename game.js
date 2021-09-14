@@ -3,11 +3,12 @@ import _K from "./js/kaboom.js"
 import _GAME_DESERT from "./js/scenes/game-desert.js";
 import _PAUSE from "./js/scenes/pause.js";
 
-var DAY_NIGHT_COUNT = 1;
-var GAME_HOUR = 5;
-var GAME_DAY = 1;
 const PLAYER_DATA = {
+    'NEWGAME': true,
     'SCORE' : 0,
+    'DAY_NIGHT_COUNT': 1,
+    'GAME_HOUR' : 5,
+    'GAME_DAY' : 1, 
     'LVL' : 0,
     'XP': 0,
     'PUMPS' : 1,
@@ -72,4 +73,4 @@ loadSpriteAtlas("src/gui/GUI.png", {
 _K.scene('game-desert', _GAME_DESERT);
 _K.scene('pause', _PAUSE);
 
-_K.go('game-desert',PLAYER_DATA, DAY_NIGHT_COUNT, GAME_DAY, GAME_HOUR);
+_K.go('game-desert',PLAYER_DATA);
