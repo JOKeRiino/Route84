@@ -1,6 +1,15 @@
 import _K from '../kaboom.js'
 
-export default function _GAME_DESERT (PLAYER_DATA, dayNightCount, gameDay, gameHour) {
+export default function _GAME_DESERT (PLAYER_DATA) {
+    //! CHECK IF NEW GAME
+    if(!PLAYER_DATA.NEWGAME){
+        PLAYER_DATA.DAY_NIGHT_COUNT--;
+        PLAYER_DATA.GAME_HOUR--;
+    }
+    if(PLAYER_DATA.NEWGAME){
+        PLAYER_DATA.NEWGAME = false;
+    }
+
     layers(['bg', 'obj', 'obj2', 'ui'], 'obj')
 
     // BG SPRITES
@@ -61,26 +70,26 @@ export default function _GAME_DESERT (PLAYER_DATA, dayNightCount, gameDay, gameH
 
     //UI SPRITES
     const UI_CLOCK = add([
-        text(gameHour + ':00 ', {
+        text(PLAYER_DATA.GAME_HOUR + ':00 ', {
             width: 70
         }),
         pos(625,5),
         layer('ui'),
         scale(.3),
         {
-            value: gameHour
+            value: PLAYER_DATA.GAME_HOUR
         }
 
     ])
     const UI_CAL = add([
-        text(gameDay + '.Day', {
+        text(PLAYER_DATA.GAME_DAY + '.Day', {
             width: 70
         }),
         pos(625,27),
         layer('ui'),
         scale(.25),
         {
-            value: gameDay
+            value: PLAYER_DATA.GAME_DAY
         }
 
     ])
@@ -146,8 +155,8 @@ export default function _GAME_DESERT (PLAYER_DATA, dayNightCount, gameDay, gameH
 
     //day-night-cycle (60secs)
     loop(60, ()=> {
-        if(dayNightCount % 2 === 0) {
-            dayNightCount++;
+        if(PLAYER_DATA.DAY_NIGHT_COUNT % 2 === 0) {
+            PLAYER_DATA.DAY_NIGHT_COUNT++;
             __BG.use(sprite("bg-night"));
             __STREET.use(sprite("street-night"));
             __HYDRANT.use(sprite("hydrant-night"));
@@ -155,7 +164,7 @@ export default function _GAME_DESERT (PLAYER_DATA, dayNightCount, gameDay, gameH
             __PUMP.use(sprite("pump-night"));
         }
         else {
-            dayNightCount++;
+            PLAYER_DATA.DAY_NIGHT_COUNT++;
             __BG.use(sprite("bg-day"));
             __STREET.use(sprite("street-day"));
             __HYDRANT.use(sprite("hydrant-day"));
@@ -165,14 +174,13 @@ export default function _GAME_DESERT (PLAYER_DATA, dayNightCount, gameDay, gameH
     })
     //clock controller (5secs per hour)
     loop(5, () => { 
-        if(gameHour === 23){
-            gameHour = 0;
-            gameDay++;
-            console.log("Day: " + gameDay);
+        if(PLAYER_DATA.GAME_HOUR === 23){
+            PLAYER_DATA.GAME_HOUR = 0;
+            PLAYER_DATA.GAME_DAY++;
         } else {
-            gameHour++;
+            PLAYER_DATA.GAME_HOUR++;
         }
-        UI_CLOCK.text = gameHour + ':00 ';
+        UI_CLOCK.text = PLAYER_DATA.GAME_HOUR + ':00 ';
     })
 
     __PUMP.collides("car", (car) => {
@@ -236,7 +244,7 @@ export default function _GAME_DESERT (PLAYER_DATA, dayNightCount, gameDay, gameH
         }
     })
     clicks("pause", () => {
-        go("pause", PLAYER_DATA, dayNightCount, gameDay, gameHour);
+        go("pause", PLAYER_DATA);
     })
 }
 

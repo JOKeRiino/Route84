@@ -1,6 +1,6 @@
 import _K from '../kaboom.js'
 
-export default function _PAUSE (PLAYER_DATA, dayNightCount, gameDay, gameHour) {
+export default function _PAUSE (PLAYER_DATA) {
     layers(['bg', 'obj', 'ui'], 'obj')
 
     add([rect(700,400),color(40,40,80),layer('bg')]);
@@ -53,7 +53,7 @@ export default function _PAUSE (PLAYER_DATA, dayNightCount, gameDay, gameHour) {
     add([ text("Quit"),pos(313,245),layer("ui"),scale(.4)]);
 
     clicks("resume", () => {
-        go("game", PLAYER_DATA, dayNightCount-1, gameDay, gameHour-1);
+        _K.go('game-desert',PLAYER_DATA);
     })
 
     // clicks("save", () => {
