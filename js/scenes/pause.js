@@ -56,11 +56,12 @@ export default function _PAUSE (PLAYER_DATA) {
         _K.go('game-desert',PLAYER_DATA);
     })
 
-    // clicks("save", () => {
-    //     go("game", SCORE, dayNightCount-1, gameDay, gameHour-1);
-    // })
+    clicks("save", () => {
+        setData("localGameSave", PLAYER_DATA);
+        console.log("game saved at " + Date());
+    })
 
-    // clicks("quit", () => {
-    //     go("game", SCORE, dayNightCount-1, gameDay, gameHour-1);
-    // })
+    clicks("quit", () => {
+        _K.go('home',PLAYER_DATA);
+    })
 }

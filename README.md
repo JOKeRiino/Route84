@@ -15,5 +15,6 @@ Base for a Gas Station Tycoon Game.
 - Added first UI items
 - Added player data structure
 - Minor Bugfixes
-
-
+0.3.1
+``` Project allows game to be stored locally ```
+- Added Start Menu

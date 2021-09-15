@@ -1,6 +1,7 @@
 import _K from "./js/kaboom.js"
 
 import _GAME_DESERT from "./js/scenes/game-desert.js";
+import _HOME from "./js/scenes/home.js";
 import _PAUSE from "./js/scenes/pause.js";
 
 const PLAYER_DATA = {
@@ -35,6 +36,11 @@ loadSprite('special-car', 'src/cars/cargo.png', {
     sliceY: 0,
     anims: { drive: { from: 0, to: 1, loop: true }, },
 });
+loadSprite('home-bg', 'src/backgrounds/ezgif.com-gif-maker.png', {
+    sliceX: 5,
+    sliceY: 4,
+    anims: { idle: { from: 0, to: 15, loop: true}, },
+});
 //UI Sprite Atlas
 loadSpriteAtlas("src/gui/GUI.png", {
     "pause-button": {
@@ -55,6 +61,12 @@ loadSpriteAtlas("src/gui/GUI.png", {
         width: 48,
         height: 16
     },
+    "home-menu-button": {
+        x: 144,
+        y: 112,
+        width: 48,
+        height: 16
+    },
     "avatar": {
         x:95,
         y:32,
@@ -72,5 +84,6 @@ loadSpriteAtlas("src/gui/GUI.png", {
 //ALL SCENES
 _K.scene('game-desert', _GAME_DESERT);
 _K.scene('pause', _PAUSE);
+_K.scene('home', _HOME);
 
-_K.go('game-desert',PLAYER_DATA);
+_K.go('home',PLAYER_DATA);
