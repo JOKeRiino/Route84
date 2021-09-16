@@ -58,6 +58,10 @@ export default function _PAUSE (PLAYER_DATA) {
 
     clicks("save", () => {
         setData("localGameSave", PLAYER_DATA);
+        let save = add([text("Game Saved"),pos(277,329),layer("ui"),scale(.33),color(0,230,0),]);
+            wait(1, () => {
+                destroy(save);
+        })
         console.log("game saved at " + Date());
     })
 

@@ -10,7 +10,9 @@ export default function _GAME_DESERT (PLAYER_DATA) {
         PLAYER_DATA.NEWGAME = false;
     }
 
-    layers(['bg', 'obj', 'obj2', 'ui'], 'obj')
+    gravity(950);
+
+    layers(['bg', 'obj', 'obj2', 'ui'], 'obj')  
 
     // BG SPRITES
     let __BG = add([
@@ -127,6 +129,26 @@ export default function _GAME_DESERT (PLAYER_DATA) {
         pos(-5,-10),
         scale(2.5)
     ])
+    add([
+        sprite("jacob"),
+        pos(4,2),
+        scale(.205),
+        layer("ui")
+    ])
+    const UI_SHOP = add([
+        sprite('shop-button'),
+        pos(63,30),
+        layer('ui'),
+        scale(2,1.6),
+        "shop",
+        area({
+            width: 30,
+            height: 16,
+            offset: vec2(2,0),
+            cursor: 'pointer'
+        })
+    ])
+    const shopText = add([text("SHOP"),pos(73,33),layer('ui'),scale(.25)]);
 
     //SPAWN CARS IN LOOP
     loop(Math.floor((Math.random() * (60 - 22) + 22)), () => {
@@ -177,6 +199,7 @@ export default function _GAME_DESERT (PLAYER_DATA) {
         if(PLAYER_DATA.GAME_HOUR === 23){
             PLAYER_DATA.GAME_HOUR = 0;
             PLAYER_DATA.GAME_DAY++;
+            UI_CAL.text = PLAYER_DATA.GAME_DAY +'.Day'
         } else {
             PLAYER_DATA.GAME_HOUR++;
         }
@@ -184,7 +207,7 @@ export default function _GAME_DESERT (PLAYER_DATA) {
     })
 
     __PUMP.collides("car", (car) => {
-        if(!__PUMP.occupied && Math.random() >= .5){
+        if(!__PUMP.occupied && Math.random() >= .05){
             car.speed = 0;
             __PUMP.occupied = !__PUMP.occupied;
             __PUMP_LIGHT.color = rgb(255,0,0);
@@ -197,57 +220,225 @@ export default function _GAME_DESERT (PLAYER_DATA) {
         })
     })
 
+    //CLICK LISTENERS
     clicks("car", (car) => {
-        if(car.speed == 0) {
-            let PAYMENT
-            if(!car.is("special")) {
-                PAYMENT = Math.floor((Math.random() * (65 - 12) + 12));
-            } else {
-                PAYMENT = 200;
-            }
-            PLAYER_DATA.SCORE += PAYMENT;
-
-            let UI_PAYMENTLABEL = add([
-                text('$' + PAYMENT),
-                pos(420,260),
-                layer('ui'),
-                scale(.3),
-                area(),
-                color(0,255,0),
-                {
-                    dir: vec2(0,-1),
-                    speed: 140,
-                }
+        if(car.speed == 0 && car.clicked == false) {
+            PLAYER_DATA.gameActive = true;
+            //!MINIGAME:
+            //? MINIGAME SPRITES
+            let mini_bg = add([
+                rect(150,220),
+                pos(380,60),
+                color(40,40,80),
+                layer("ui"),
+                "mg"
             ])
-            UI_PAYMENTLABEL.action(() => {
-                UI_PAYMENTLABEL.move(UI_PAYMENTLABEL.dir.scale(UI_PAYMENTLABEL.speed));
+            let tanksize = add([
+                rect(40,200),
+                pos(390,70),
+                color(255,255,255),
+                layer("ui"),
+                "mg"
+            ])
+            let tankfloor = add([
+                rect(40,2),
+                pos(390,270),
+                solid(),
+                layer('ui'),
+                area(),
+                "border",
+                "mg"
+            ])
+            let tankceil = add([
+                rect(40,2),
+                pos(390,68),
+                solid(),
+                layer('ui'),
+                area(),
+                "border",
+                "mg"
+            ])
+            let goal = add([
+                rect(38, Math.floor(Math.random() * (35 - 20) + 20)),
+                pos(391, Math.floor(Math.random() * (150 - 75) + 75)),
+                // rect(38, 30),
+                // pos(391, 100),
+                layer('ui'),
+                color(0,240,0),
+                area(),
+                health(10),
+                "mg",
+                "goal",
+            ])
+            let progress = add([
+                rect(38,12),
+                pos(391,150),
+                color(247,200,29),
+                opacity(.8),
+                layer('ui'),
+                "progress",
+                "mg"
+            ])
+            let fuel = add([
+                rect(38,3),
+                pos(391,205),
+                color(247,200,29),
+                layer('ui'),
+                area({
+                    height: 1,
+                    width: 20,
+                    offset: vec2(9,-1)
+                }),
+                body(),
+                "mg",
+                "fuel"
+            ])
+            //? UPDATE THE PROGRESS BAR
+            action("progress", (obj) => {
+                let fuelY = fuel.pos.y
+                obj.pos.y = fuelY;
+                obj.height = 270 - obj.pos.y
             })
-            wait(.4, () => {
-                destroy(UI_PAYMENTLABEL);
+            // RAISE THE FUEL BAR ON SPACE-PRESS
+            function jump() {
+                fuel.jump(130);
+            }
+            keyPress("space", jump);
+            //! CHECK THE STATUS OF THE GOAL
+            loop(.2, () => {            
+                if(PLAYER_DATA.gameActive) {
+                    if (fuel.isColliding(goal)) {
+                        goal.hurt(1);
+                    }
+                }
+            });
+            // LOSE THE GAME IF FUEL HITS THE UPPER OR LOWER BORDER
+            fuel.collides("border", () => {
+                console.log("game lost");
+                PLAYER_DATA.gameActive = false;
+                every("mg", destroy);
+
+                if(car.is("sport")){
+                    car.speed = 200;
+                }
+                else if(car.is("sedan")){
+                    car.speed = 180;
+                }
+                else if(car.is("camper")){
+                    car.speed = 160;
+                } else {
+                    car.speed = 120;
+                }
+                __PUMP.occupied = !__PUMP.occupied;
+                __PUMP_LIGHT.color = rgb(0,255,0);
+                UI_CASHLABEL.text = '$' + PLAYER_DATA.SCORE;
             })
-
-            if(car.is("sport")){
-                car.speed = 200;
-            }
-            else if(car.is("sedan")){
-                car.speed = 180;
-            }
-            else if(car.is("camper")){
-                car.speed = 160;
-            } else {
-                car.speed = 120;
-            }
-
-            __PUMP.occupied = !__PUMP.occupied;
-            __PUMP_LIGHT.color = rgb(0,255,0);
-            UI_CASHLABEL.text = '$' + PLAYER_DATA.SCORE;
+            //! END THE GAME IF THE LIFE OF GOAL GETS SMALLER THAN 1
+            goal.on("death", () => {
+                every("mg", destroy);
+                console.log("game won");
+                let PAYMENT
+                
+                if(!car.is("special")) {
+                    PAYMENT = Math.floor((Math.random() * (65 - 12) + 12));
+                } else {
+                    PAYMENT = 200;
+                }
+                PLAYER_DATA.SCORE += PAYMENT;
+            
+                let UI_PAYMENTLABEL = add([
+                    text('$' + PAYMENT),
+                    pos(420,260),
+                    layer('ui'),
+                    scale(.3),
+                    area(),
+                    color(0,255,0),
+                    {
+                        dir: vec2(0,-1),
+                        speed: 140,
+                    }
+                ])
+                UI_PAYMENTLABEL.action(() => {
+                    UI_PAYMENTLABEL.move(UI_PAYMENTLABEL.dir.scale(UI_PAYMENTLABEL.speed));
+                })
+                wait(.4, () => {
+                    destroy(UI_PAYMENTLABEL);
+                })
+                
+                if(car.is("sport")){
+                    car.speed = 200;
+                }
+                else if(car.is("sedan")){
+                    car.speed = 180;
+                }
+                else if(car.is("camper")){
+                    car.speed = 160;
+                } else {
+                    car.speed = 120;
+                }
+                __PUMP.occupied = !__PUMP.occupied;
+                __PUMP_LIGHT.color = rgb(0,255,0);
+                UI_CASHLABEL.text = '$' + PLAYER_DATA.SCORE;
+            })
+            car.clicked = true;
         }
     })
     clicks("pause", () => {
         go("pause", PLAYER_DATA);
     })
+    clicks("shop", () => {
+        go("shop", PLAYER_DATA);
+    })
+
+    //FUNCTIONS IN SCOPE
+    
+    function winGame(car) {
+
+        let PAYMENT
+        if(!car.is("special")) {
+            PAYMENT = Math.floor((Math.random() * (65 - 12) + 12));
+        } else {
+            PAYMENT = 200;
+        }
+        PLAYER_DATA.SCORE += PAYMENT;
+    
+        let UI_PAYMENTLABEL = add([
+            text('$' + PAYMENT),
+            pos(420,260),
+            layer('ui'),
+            scale(.3),
+            area(),
+            color(0,255,0),
+            {
+                dir: vec2(0,-1),
+                speed: 140,
+            }
+        ])
+        UI_PAYMENTLABEL.action(() => {
+            UI_PAYMENTLABEL.move(UI_PAYMENTLABEL.dir.scale(UI_PAYMENTLABEL.speed));
+        })
+        wait(.4, () => {
+            destroy(UI_PAYMENTLABEL);
+        })
+        
+        if(car.is("sport")){
+            car.speed = 200;
+        }
+        else if(car.is("sedan")){
+            car.speed = 180;
+        }
+        else if(car.is("camper")){
+            car.speed = 160;
+        } else {
+            car.speed = 120;
+        }
+        __PUMP.occupied = !__PUMP.occupied;
+        __PUMP_LIGHT.color = rgb(0,255,0);
+        UI_CASHLABEL.text = '$' + PLAYER_DATA.SCORE;
+    }
 }
 
+//FUCTIONS OoSCOPE
 function createRandomCar () {
     if(get("car").length < 3) {
         let random = Math.random();
@@ -271,6 +462,7 @@ function createRandomCar () {
                 {
                     dir: vec2(-1,0),
                     speed: 120,
+                    clicked: false,
                 }
             ])
         }
@@ -291,6 +483,7 @@ function createRandomCar () {
                 {
                     dir: vec2(-1,0),
                     speed: 160,
+                    clicked: false,
                 }
             ])
         }
@@ -311,6 +504,7 @@ function createRandomCar () {
                 {
                     dir: vec2(-1,0),
                     speed: 180,
+                    clicked: false,
                 }
             ])
         }
@@ -331,6 +525,7 @@ function createRandomCar () {
                 {
                     dir: vec2(-1,0),
                     speed: 200,
+                    clicked: false,
                 }
             ])
         }
