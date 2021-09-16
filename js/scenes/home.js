@@ -3,9 +3,6 @@ import _K from '../kaboom.js'
 export default function _HOME (PLAYER_DATA) {
     layers(['bg', 'ui'], 'ui')
 
-    // add([rect(700,400),color(40,40,80),layer('bg')]);
-    // add([ text("Game Paused"),pos(247,50),layer("bg"),scale(.4)]);
-
     let homeBackground = add([
         sprite("home-bg",{
             anim: "idle",
