@@ -7,15 +7,31 @@ import _SHOP from "./js/scenes/shop.js";
 
 const PLAYER_DATA = {
     'NEWGAME': true,
-    'SCORE' : 50,
-    'gameActive': false,
+    'SCORE' : 27,
     'DAY_NIGHT_COUNT': 1,
     'GAME_HOUR' : 5,
     'GAME_DAY' : 1,
     'MULTIPLIER': 1,
     'LVL' : 1,
     'XP': 0,
-    'PUMPS': 1,
+    'INVENTORY': {
+        'CHAPTER1' : [
+            { //pumps
+                'lvl': 1,
+                'amount': 1
+            },
+            { //clerk
+                'amount': 0,
+                'lvl': 0
+            },
+            { //house
+                'lvl': 1
+            },
+            { //cleandirt
+                'cleaned': false
+            }
+        ], 
+    },
     'SHOPITEMS': {
         'CHAPTER1' : [
             { //pumps
@@ -65,8 +81,44 @@ loadSprite('hydrant-night', 'src/street/wheels&hydrant.png');
 loadSprite('hydrant-day', 'src/street/wheels&hydrantpale.png');
 loadSprite('house-day', 'src/house/house-day.png');
 loadSprite('house-night', 'src/house/house-night.png');
-loadSprite('pump-day', 'src/assets/pump-day.png');
-loadSprite('pump-night', 'src/assets/pump-night.png');
+loadSpriteAtlas("src/assets/gas-pump-bitmap.png", { //OWN SPRITE
+    "gp-c1-u1-day": {
+        x:0,
+        y:0,
+        width: 64,
+        height: 64
+    },
+    "gp-c1-u1-night": {
+        x:64,
+        y:0,
+        width: 64,
+        height: 64
+    },
+    "gp-c1-u2-day": {
+        x:0,
+        y:64,
+        width: 64,
+        height: 64
+    },
+    "gp-c1-u2-night": {
+        x:64,
+        y:64,
+        width: 64,
+        height: 64
+    },
+    "gp-c1-u3-day": {
+        x:0,
+        y:128,
+        width: 64,
+        height: 64
+    },
+    "gp-c1-u3-night": {
+        x:64,
+        y:128,
+        width: 64,
+        height: 64
+    }
+})
 
 loadSprite('sportscar', 'src/cars/sportscar-night.png');
 loadSprite('camper', 'src/cars/spr_camper_0.png');

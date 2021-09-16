@@ -21,8 +21,10 @@ Base for a Gas Station Tycoon Game.
 - Added Start Menu
 - Add working shop and shop button
 
-0.4.0
+0.4.1
 ` added refuling minigame`
+- Added own gas pump sprite, second pump buyable and functionable
+
 
 //TODO
 

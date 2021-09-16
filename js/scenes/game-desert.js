@@ -11,7 +11,6 @@ export default function _GAME_DESERT (PLAYER_DATA) {
     }
 
     gravity(950);
-
     layers(['bg', 'obj', 'obj2', 'ui'], 'obj')  
 
     // BG SPRITES
@@ -41,19 +40,19 @@ export default function _GAME_DESERT (PLAYER_DATA) {
         scale(.09,.09),
     ])
     let __PUMP_LIGHT = add([
-        rect(10,10),
+        rect(12,12),
         color(0,255,0,1),
-        pos(451,293),
+        pos(456,289),
     ])
     //OBJ2 SPRITES
     let __PUMP = add([
-        sprite("pump-day"),
+        sprite("gp-c1-u1-day"),
         pos(430,287),
         layer('obj'),
-        scale(.09),
+        scale(1),
         area({
-            width: 100,
-            height: 500,
+            width: 5,
+            height: 50,
             offset: vec2(0,0)
         }),
         "pump",
@@ -61,6 +60,31 @@ export default function _GAME_DESERT (PLAYER_DATA) {
             occupied: false,
         }
     ])
+    let __PUMP2_LIGHT = add([
+        rect(12,12),
+        color(0,255,0,1),
+        pos(276,289),
+        "amount2",
+    ])
+    let __PUMP2 = add([
+        sprite("gp-c1-u1-day"),
+        pos(250,287),
+        layer('obj'),
+        scale(1),
+        area({
+            width: 0,
+            height: 0,
+            offset: vec2(0,0)
+        }),
+        "pump",
+        "amount2",
+        {
+            occupied: false,
+        }
+    ])
+    //hide the second gas pumps
+    every("amount2", (obj) => {obj.hidden = true;})
+    //!PATCH THIS OUT!!! :
     let __HITBOX = add([
         rect(1,80),
         pos(-150,300),
@@ -69,6 +93,7 @@ export default function _GAME_DESERT (PLAYER_DATA) {
         area(),
         "wall"
     ])
+
 
     //UI SPRITES
     const UI_CLOCK = add([
@@ -95,7 +120,7 @@ export default function _GAME_DESERT (PLAYER_DATA) {
         }
 
     ])
-    const cashlabel = add([
+    add([
         sprite("cash-label"),
         pos(57,-2),
         scale(2.6)
@@ -122,7 +147,7 @@ export default function _GAME_DESERT (PLAYER_DATA) {
             cursor: "pointer",
         }),
     ])
-    const UI_AVATAR = add([
+    add([
         sprite("avatar", {
             flipY: true
         }),
@@ -148,7 +173,7 @@ export default function _GAME_DESERT (PLAYER_DATA) {
             cursor: 'pointer'
         })
     ])
-    const shopText = add([text("SHOP"),pos(73,33),layer('ui'),scale(.25)]);
+    add([text("SHOP"),pos(73,33),layer('ui'),scale(.25)]);
 
     //SPAWN CARS IN LOOP
     loop(Math.floor((Math.random() * (60 - 22) + 22)), () => {
@@ -176,6 +201,14 @@ export default function _GAME_DESERT (PLAYER_DATA) {
     })
 
     //day-night-cycle (60secs)
+    //! CHANGE SPRITES ACCORDING TO PLAYER INVENTORY (BOUGHT ITEMS)
+    const inventory = PLAYER_DATA.INVENTORY.CHAPTER1
+    if(inventory[0].amount == 2) {
+        every("amount2", (obj) => {obj.hidden = false;});
+        __PUMP2.area.height = 50;
+        __PUMP2.area.width = 5;
+    }
+
     loop(60, ()=> {
         if(PLAYER_DATA.DAY_NIGHT_COUNT % 2 === 0) {
             PLAYER_DATA.DAY_NIGHT_COUNT++;
@@ -183,7 +216,8 @@ export default function _GAME_DESERT (PLAYER_DATA) {
             __STREET.use(sprite("street-night"));
             __HYDRANT.use(sprite("hydrant-night"));
             __HOUSE.use(sprite("house-night"));
-            __PUMP.use(sprite("pump-night"));
+            __PUMP.use(sprite("gp-c1-u"+ inventory[0].lvl +"-night"));
+            __PUMP2.use(sprite("gp-c1-u"+ inventory[0].lvl +"-night"));
         }
         else {
             PLAYER_DATA.DAY_NIGHT_COUNT++;
@@ -191,7 +225,8 @@ export default function _GAME_DESERT (PLAYER_DATA) {
             __STREET.use(sprite("street-day"));
             __HYDRANT.use(sprite("hydrant-day"));
             __HOUSE.use(sprite("house-day"));
-            __PUMP.use(sprite("pump-day"));
+            __PUMP.use(sprite("gp-c1-u"+ inventory[0].lvl +"-day"));
+            __PUMP2.use(sprite("gp-c1-u"+ inventory[0].lvl +"-day"));
         }
     })
     //clock controller (5secs per hour)
@@ -209,10 +244,20 @@ export default function _GAME_DESERT (PLAYER_DATA) {
     __PUMP.collides("car", (car) => {
         if(!__PUMP.occupied && Math.random() >= .05){
             car.speed = 0;
+            car.pump = 1;
             __PUMP.occupied = !__PUMP.occupied;
             __PUMP_LIGHT.color = rgb(255,0,0);
         }
     })
+    __PUMP2.collides("car", (car) => {
+        if(!__PUMP2.occupied && !car.isFueled && Math.random() >= .05){
+            car.speed = 0;
+            car.pump = 2;
+            __PUMP2.occupied = !__PUMP2.occupied;
+            __PUMP2_LIGHT.color = rgb(255,0,0);
+        }
+    })
+
     __HITBOX.collides("car", (car) => {
         destroy(car);
         wait(Math.floor(Math.random() * (5 - 1) + 1), () => {
@@ -223,26 +268,31 @@ export default function _GAME_DESERT (PLAYER_DATA) {
     //CLICK LISTENERS
     clicks("car", (car) => {
         if(car.speed == 0 && car.clicked == false) {
-            PLAYER_DATA.gameActive = true;
+            car.clicked = true;
             //!MINIGAME:
+            let pump = [
+                [380,390,391,420],
+                [180,190,191,220],
+            ]
+
             //? MINIGAME SPRITES
             let mini_bg = add([
                 rect(150,220),
-                pos(380,60),
+                pos(pump[car.pump-1][0],60),
                 color(40,40,80),
                 layer("ui"),
                 "mg"
             ])
             let tanksize = add([
                 rect(40,200),
-                pos(390,70),
+                pos(pump[car.pump-1][1],70),
                 color(255,255,255),
                 layer("ui"),
                 "mg"
             ])
             let tankfloor = add([
                 rect(40,2),
-                pos(390,270),
+                pos(pump[car.pump-1][1],270),
                 solid(),
                 layer('ui'),
                 area(),
@@ -251,7 +301,7 @@ export default function _GAME_DESERT (PLAYER_DATA) {
             ])
             let tankceil = add([
                 rect(40,2),
-                pos(390,68),
+                pos(pump[car.pump-1][1],68),
                 solid(),
                 layer('ui'),
                 area(),
@@ -260,7 +310,7 @@ export default function _GAME_DESERT (PLAYER_DATA) {
             ])
             let goal = add([
                 rect(38, Math.floor(Math.random() * (35 - 20) + 20)),
-                pos(391, Math.floor(Math.random() * (150 - 75) + 75)),
+                pos(pump[car.pump-1][2], Math.floor(Math.random() * (150 - 75) + 75)),
                 // rect(38, 30),
                 // pos(391, 100),
                 layer('ui'),
@@ -272,7 +322,7 @@ export default function _GAME_DESERT (PLAYER_DATA) {
             ])
             let progress = add([
                 rect(38,12),
-                pos(391,150),
+                pos(pump[car.pump-1][2],150),
                 color(247,200,29),
                 opacity(.8),
                 layer('ui'),
@@ -281,7 +331,7 @@ export default function _GAME_DESERT (PLAYER_DATA) {
             ])
             let fuel = add([
                 rect(38,3),
-                pos(391,205),
+                pos(pump[car.pump-1][2],205),
                 color(247,200,29),
                 layer('ui'),
                 area({
@@ -306,18 +356,17 @@ export default function _GAME_DESERT (PLAYER_DATA) {
             keyPress("space", jump);
             //! CHECK THE STATUS OF THE GOAL
             loop(.2, () => {            
-                if(PLAYER_DATA.gameActive) {
                     if (fuel.isColliding(goal)) {
                         goal.hurt(1);
                     }
-                }
             });
             // LOSE THE GAME IF FUEL HITS THE UPPER OR LOWER BORDER
             fuel.collides("border", () => {
                 console.log("game lost");
-                PLAYER_DATA.gameActive = false;
                 every("mg", destroy);
 
+                car.isFueled = true;
+                car.clicked = false;
                 if(car.is("sport")){
                     car.speed = 200;
                 }
@@ -329,16 +378,22 @@ export default function _GAME_DESERT (PLAYER_DATA) {
                 } else {
                     car.speed = 120;
                 }
-                __PUMP.occupied = !__PUMP.occupied;
-                __PUMP_LIGHT.color = rgb(0,255,0);
-                UI_CASHLABEL.text = '$' + PLAYER_DATA.SCORE;
+
+                if(car.pump == 1){
+                    __PUMP.occupied = !__PUMP.occupied;
+                    __PUMP_LIGHT.color = rgb(0,255,0);
+                }
+                else if(car.pump = 2){
+                    __PUMP2.occupied = !__PUMP2.occupied;
+                    __PUMP2_LIGHT.color = rgb(0,255,0);
+                }
             })
             //! END THE GAME IF THE LIFE OF GOAL GETS SMALLER THAN 1
             goal.on("death", () => {
                 every("mg", destroy);
                 console.log("game won");
                 let PAYMENT
-                
+
                 if(!car.is("special")) {
                     PAYMENT = Math.floor((Math.random() * (65 - 12) + 12));
                 } else {
@@ -348,7 +403,7 @@ export default function _GAME_DESERT (PLAYER_DATA) {
             
                 let UI_PAYMENTLABEL = add([
                     text('$' + PAYMENT),
-                    pos(420,260),
+                    pos(pump[car.pump-1][3],260),
                     layer('ui'),
                     scale(.3),
                     area(),
@@ -364,7 +419,10 @@ export default function _GAME_DESERT (PLAYER_DATA) {
                 wait(.4, () => {
                     destroy(UI_PAYMENTLABEL);
                 })
-                
+
+                car.isFueled = true;
+                car.clicked = false;
+
                 if(car.is("sport")){
                     car.speed = 200;
                 }
@@ -376,11 +434,16 @@ export default function _GAME_DESERT (PLAYER_DATA) {
                 } else {
                     car.speed = 120;
                 }
-                __PUMP.occupied = !__PUMP.occupied;
-                __PUMP_LIGHT.color = rgb(0,255,0);
+                if(car.pump == 1) {
+                    __PUMP.occupied = !__PUMP.occupied;
+                    __PUMP_LIGHT.color = rgb(0,255,0);
+                }
+                else if(car.pump == 2) {
+                    __PUMP2.occupied = !__PUMP2.occupied;
+                    __PUMP2_LIGHT.color = rgb(0,255,0);
+                }
                 UI_CASHLABEL.text = '$' + PLAYER_DATA.SCORE;
             })
-            car.clicked = true;
         }
     })
     clicks("pause", () => {
@@ -463,6 +526,8 @@ function createRandomCar () {
                     dir: vec2(-1,0),
                     speed: 120,
                     clicked: false,
+                    pump: 0,
+                    isFueled: false,
                 }
             ])
         }
@@ -484,6 +549,8 @@ function createRandomCar () {
                     dir: vec2(-1,0),
                     speed: 160,
                     clicked: false,
+                    pump: 0,
+                    isFueled: false,
                 }
             ])
         }
@@ -505,6 +572,8 @@ function createRandomCar () {
                     dir: vec2(-1,0),
                     speed: 180,
                     clicked: false,
+                    pump: 0,
+                    isFueled: false,
                 }
             ])
         }
@@ -526,6 +595,8 @@ function createRandomCar () {
                     dir: vec2(-1,0),
                     speed: 200,
                     clicked: false,
+                    pump: 0,
+                    isFueled: false,
                 }
             ])
         }

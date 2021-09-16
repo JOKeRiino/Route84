@@ -4,6 +4,7 @@ export default function _SHOP (PLAYER_DATA) {
     layers(['bg', 'obj', 'ui'], 'obj')
 
     let pD = PLAYER_DATA.SHOPITEMS.CHAPTER1;
+    const inventory = PLAYER_DATA.INVENTORY.CHAPTER1
 
     add([rect(700,400),color(40,40,80),layer('bg')]);
     add([ text("SHOP"),pos(310,20),layer("bg"),scale(.4)]);
@@ -215,8 +216,24 @@ export default function _SHOP (PLAYER_DATA) {
 
         if(PLAYER_DATA.SCORE >= button.cost && button.available > 0){
             PLAYER_DATA.SCORE -= button.cost;
-            //TODO Hier kommen die dinge hin die sich verändern nach dem kauf!
             pD[index].available -= 1;
+            //TODO Hier kommen die dinge hin die sich verändern nach dem kauf!
+            if(index == 0) {
+                inventory[0].amount++;
+            }
+            else if(index == 1) {
+                inventory[1].amount++;
+            }
+            else if(index == 2) {
+                inventory[1].lvl++;
+            }
+            else if(index == 3) {
+                inventory[2].lvl++;
+                inventory[0].lvl++;
+            }
+            else if(index == 4) {
+                inventory[3].cleaned = true;
+            }
             purchaseText("Shopkeeper (Pete)\n\nThank you!")
             wait(.5, () => {
                 _K.go('game-desert',PLAYER_DATA);
