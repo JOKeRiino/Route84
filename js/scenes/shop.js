@@ -232,7 +232,7 @@ export default function _SHOP (PLAYER_DATA) {
                 inventory[0].lvl++;
             }
             else if(index == 4) {
-                inventory[3].cleaned = true;
+                inventory[3].lvl++;
             }
             purchaseText("Shopkeeper (Pete)\n\nThank you!")
             wait(.5, () => {

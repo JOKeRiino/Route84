@@ -13,7 +13,7 @@ export default function _GAME_DESERT (PLAYER_DATA) {
     gravity(950);
     layers(['bg', 'obj', 'obj2', 'ui'], 'obj')  
 
-    // BG SPRITES
+    //BG SPRITES
     let __BG = add([
         sprite("bg-day"),
         pos(0,-30),
@@ -21,39 +21,43 @@ export default function _GAME_DESERT (PLAYER_DATA) {
         scale(1.861,1.191)
     ])
     let __HOUSE = add([
-        sprite("house-day"),
-        pos(530,120),
+        sprite("house-c1-u1-day"),
+        pos(239,124),
         layer('obj'),
-        scale(.7),
+        scale(1.8),
     ])
+
     //OBJ1 SPRITES
     let __STREET = add([
-        sprite("street-day"),
-        pos(0,130),
+        sprite("street-c1-u1-night"),
+        pos(0,330),
         layer('obj'),
-        scale(.365,.25),
+        scale(1),
     ])
-    let __HYDRANT  = add([
-        sprite("hydrant-day"),
-        pos(0,269),
+    let __DUMPSTER = add([
+        sprite("dumpster-day", {
+            anim: 'idle',
+            animSpeed: .6
+        }),
+        pos(130,268),
+        scale(1.2),
         layer('obj'),
-        scale(.09,.09),
     ])
     let __PUMP_LIGHT = add([
         rect(12,12),
         color(0,255,0,1),
-        pos(456,289),
+        pos(456,272),
     ])
     //OBJ2 SPRITES
     let __PUMP = add([
         sprite("gp-c1-u1-day"),
-        pos(430,287),
+        pos(430,270),
         layer('obj'),
         scale(1),
         area({
             width: 5,
             height: 50,
-            offset: vec2(0,0)
+            offset: vec2(0,17)
         }),
         "pump",
         {
@@ -63,18 +67,18 @@ export default function _GAME_DESERT (PLAYER_DATA) {
     let __PUMP2_LIGHT = add([
         rect(12,12),
         color(0,255,0,1),
-        pos(276,289),
+        pos(276,272),
         "amount2",
     ])
     let __PUMP2 = add([
         sprite("gp-c1-u1-day"),
-        pos(250,287),
+        pos(250,270),
         layer('obj'),
         scale(1),
         area({
             width: 0,
             height: 0,
-            offset: vec2(0,0)
+            offset: vec2(0,17)
         }),
         "pump",
         "amount2",
@@ -208,23 +212,26 @@ export default function _GAME_DESERT (PLAYER_DATA) {
         __PUMP2.area.height = 50;
         __PUMP2.area.width = 5;
     }
+    if(inventory[3].lvl == 2){
+        __DUMPSTER.hidden = true;
+    }
 
     loop(60, ()=> {
         if(PLAYER_DATA.DAY_NIGHT_COUNT % 2 === 0) {
             PLAYER_DATA.DAY_NIGHT_COUNT++;
             __BG.use(sprite("bg-night"));
-            __STREET.use(sprite("street-night"));
-            __HYDRANT.use(sprite("hydrant-night"));
-            __HOUSE.use(sprite("house-night"));
+            __STREET.use(sprite("street-c1-u"+inventory[3].lvl+"-night"));
+            __HOUSE.use(sprite("house-c1-u1-night"));
+            __DUMPSTER.use(sprite("dumpster-night", {anim:'idle',animSpeed:.6}));
             __PUMP.use(sprite("gp-c1-u"+ inventory[0].lvl +"-night"));
             __PUMP2.use(sprite("gp-c1-u"+ inventory[0].lvl +"-night"));
         }
         else {
             PLAYER_DATA.DAY_NIGHT_COUNT++;
             __BG.use(sprite("bg-day"));
-            __STREET.use(sprite("street-day"));
-            __HYDRANT.use(sprite("hydrant-day"));
-            __HOUSE.use(sprite("house-day"));
+            __STREET.use(sprite("street-c1-u"+inventory[3].lvl+"-day"));
+            __HOUSE.use(sprite("house-c1-u1-day"));
+            __DUMPSTER.use(sprite("dumpster-day", {anim:'idle',animSpeed:.6}));
             __PUMP.use(sprite("gp-c1-u"+ inventory[0].lvl +"-day"));
             __PUMP2.use(sprite("gp-c1-u"+ inventory[0].lvl +"-day"));
         }
@@ -276,29 +283,6 @@ export default function _GAME_DESERT (PLAYER_DATA) {
             ]
 
             //? MINIGAME SPRITES
-            let mini_bg = add([
-                rect(150,220),
-                pos(pump[car.pump-1][0],60),
-                color(40,40,80),
-                layer("ui"),
-                "mg"
-            ])
-            let tanksize = add([
-                rect(40,200),
-                pos(pump[car.pump-1][1],70),
-                color(255,255,255),
-                layer("ui"),
-                "mg"
-            ])
-            let tankfloor = add([
-                rect(40,2),
-                pos(pump[car.pump-1][1],270),
-                solid(),
-                layer('ui'),
-                area(),
-                "border",
-                "mg"
-            ])
             let tankceil = add([
                 rect(40,2),
                 pos(pump[car.pump-1][1],68),
@@ -308,11 +292,26 @@ export default function _GAME_DESERT (PLAYER_DATA) {
                 "border",
                 "mg"
             ])
+            let tankfloor = add([
+                rect(40,2),
+                color(40,40,80),
+                pos(pump[car.pump-1][1],270),
+                solid(),
+                layer('ui'),
+                area(),
+                "border",
+                "mg"
+            ])
+            let tanksize = add([
+                rect(40,200),
+                pos(pump[car.pump-1][1],70),
+                color(255,255,255),
+                layer("ui"),
+                "mg"
+            ])
             let goal = add([
                 rect(38, Math.floor(Math.random() * (35 - 20) + 20)),
                 pos(pump[car.pump-1][2], Math.floor(Math.random() * (150 - 75) + 75)),
-                // rect(38, 30),
-                // pos(391, 100),
                 layer('ui'),
                 color(0,240,0),
                 area(),
@@ -342,6 +341,12 @@ export default function _GAME_DESERT (PLAYER_DATA) {
                 body(),
                 "mg",
                 "fuel"
+            ])
+            let mini_bg = add([
+                sprite("mini-bg"),
+                pos(pump[car.pump-1][0],60),
+                layer("ui"),
+                "mg"
             ])
             //? UPDATE THE PROGRESS BAR
             action("progress", (obj) => {

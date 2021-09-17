@@ -6,7 +6,7 @@ Base for a Gas Station Tycoon Game.
 0.1.4
 - Working Day-Night-Cycle and clock aswell as day counter
 - Working CarSpawn (3 standard cars + 1 special car)
-- Working Refuling (percentage based) and billing
+- Working Refueling (percentage based) and billing
 - Added Filler Cars for cenery purposes
 
 0.2.4
@@ -19,11 +19,14 @@ Base for a Gas Station Tycoon Game.
 0.3.2
 ``` Project allows game to be stored locally ```
 - Added Start Menu
-- Add working shop and shop button
+- Added working shop and shop button
 
-0.4.1
+0.4.4
 ` added refuling minigame`
 - Added own gas pump sprite, second pump buyable and functionable
+- Added own sprite for street and the refueling minigame, street is now repairable.
+- Added dumpster with flies
+- Added own sprite for house (not upgradable yet)
 
 
 //TODO
