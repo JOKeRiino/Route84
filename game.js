@@ -7,7 +7,7 @@ import _SHOP from "./js/scenes/shop.js";
 
 const PLAYER_DATA = {
     'NEWGAME': true,
-    'SCORE' : 200,
+    'SCORE' : 211,
     'DAY_NIGHT_COUNT': 1,
     'GAME_HOUR' : 5,
     'GAME_DAY' : 1,
@@ -76,8 +76,8 @@ const PLAYER_DATA = {
 // LOAD ASSETS
 loadSprite('bg-day', 'src/backgrounds/finalDay.PNG');
 loadSprite('bg-night', 'src/backgrounds/finalNight.PNG');
-loadSprite('house-day', 'src/house/house-day.png');
-loadSprite('house-night', 'src/house/house-night.png');
+// loadSprite('house-day', 'src/house/house-day.png');
+// loadSprite('house-night', 'src/house/house-night.png');
 loadSpriteAtlas('src/house/house-bitmap.png', { //OWN SPRITE
     "house-c1-u1-day": {
         x:0,
@@ -90,9 +90,33 @@ loadSpriteAtlas('src/house/house-bitmap.png', { //OWN SPRITE
         y: 0,
         width: 256,
         height: 128
-    }
-})
+    },
+    "house-c1-u2-day": {
+        x:0,
+        y:128,
+        width:256,
+        height: 128
+    },
+    "house-c1-u2-night": {
+        x: 256,
+        y: 128,
+        width: 256,
+        height: 128
+    },
+    "house-c1-u3-day": {
+        x:0,
+        y:256,
+        width:256,
+        height: 128
+    },
+    "house-c1-u3-night": {
+        x: 256,
+        y: 256,
+        width: 256,
+        height: 128
+    },
 
+})
 loadSpriteAtlas('src/street/street-bitmap.png', { //OWN SPRITE
     "street-c1-u1-day": {
         x:0,
