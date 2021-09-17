@@ -221,7 +221,7 @@ export default function _GAME_DESERT (PLAYER_DATA) {
             PLAYER_DATA.DAY_NIGHT_COUNT++;
             __BG.use(sprite("bg-night"));
             __STREET.use(sprite("street-c1-u"+inventory[3].lvl+"-night"));
-            __HOUSE.use(sprite("house-c1-u1-night"));
+            __HOUSE.use(sprite("house-c1-u"+inventory[2].lvl+"-night"));
             __DUMPSTER.use(sprite("dumpster-night", {anim:'idle',animSpeed:.6}));
             __PUMP.use(sprite("gp-c1-u"+ inventory[0].lvl +"-night"));
             __PUMP2.use(sprite("gp-c1-u"+ inventory[0].lvl +"-night"));
@@ -230,7 +230,7 @@ export default function _GAME_DESERT (PLAYER_DATA) {
             PLAYER_DATA.DAY_NIGHT_COUNT++;
             __BG.use(sprite("bg-day"));
             __STREET.use(sprite("street-c1-u"+inventory[3].lvl+"-day"));
-            __HOUSE.use(sprite("house-c1-u1-day"));
+            __HOUSE.use(sprite("house-c1-u"+inventory[2].lvl+"-day"));
             __DUMPSTER.use(sprite("dumpster-day", {anim:'idle',animSpeed:.6}));
             __PUMP.use(sprite("gp-c1-u"+ inventory[0].lvl +"-day"));
             __PUMP2.use(sprite("gp-c1-u"+ inventory[0].lvl +"-day"));
