@@ -74,10 +74,9 @@ const PLAYER_DATA = {
 //_K.debug.inspect = true;
 
 // LOAD ASSETS
-loadSprite('bg-day', 'src/backgrounds/finalDay.PNG');
-loadSprite('bg-night', 'src/backgrounds/finalNight.PNG');
-// loadSprite('house-day', 'src/house/house-day.png');
-// loadSprite('house-night', 'src/house/house-night.png');
+loadSprite('bg-day', 'src/backgrounds/finalDay.PNG'); //TODO CHANGE SPRITE TO OWN
+loadSprite('bg-night', 'src/backgrounds/finalNight.PNG'); //TODO CHANGE SPRITE TO OWN
+
 loadSpriteAtlas('src/house/house-bitmap.png', { //OWN SPRITE
     "house-c1-u1-day": {
         x:0,
@@ -201,24 +200,25 @@ loadSpriteAtlas('src/street/dumpster-bitmap.png', { //OWN SPRITE
     }
 })
 
-loadSprite('sportscar', 'src/cars/sportscar-night.png');
-loadSprite('camper', 'src/cars/spr_camper_0.png');
-loadSprite('sedan', 'src/cars/spr_bluecar_0.png');
-loadSprite('special-car', 'src/cars/cargo.png', {
+loadSprite('sportscar', 'src/cars/sportscar-night.png'); //TODO CHANGE SPRITE TO OWN
+loadSprite('camper', 'src/cars/spr_camper_0.png'); //TODO CHANGE SPRITE TO OWN
+loadSprite('sedan', 'src/cars/spr_bluecar_0.png'); //TODO CHANGE SPRITE TO OWN
+loadSprite('special-car', 'src/cars/cargo.png', { //TODO CHANGE SPRITE TO OWN
     sliceX: 2,
     sliceY: 0,
     anims: { drive: { from: 0, to: 1, loop: true }, },
 });
-loadSprite('home-bg', 'src/backgrounds/ezgif.com-gif-maker.png', {
+
+loadSprite('home-bg', 'src/backgrounds/ezgif.com-gif-maker.png', { //OWN SPRITE
     sliceX: 5,
     sliceY: 4,
     anims: { idle: { from: 0, to: 15, loop: true}, },
 });
-loadSprite('shopkeeper', 'src/people/shopkeeper.png');
-loadSprite('jacob', 'src/people/jacob.png');
+loadSprite('shopkeeper', 'src/people/shopkeeper.png'); //OWN SPRITE
+loadSprite('jacob', 'src/people/jacob.png'); //OWN SPRITE
 loadSprite('speech', 'src/gui/comic-2.png')
 //UI Sprite Atlas
-loadSpriteAtlas("src/gui/GUI.png", {
+loadSpriteAtlas("src/gui/GUI.png", { //TODO CHANGE SPRITE TO OWN?!
     "pause-button": {
         x: 160,
         y: 32,
@@ -280,6 +280,7 @@ _K.scene('game-desert', _GAME_DESERT);
 _K.scene('pause', _PAUSE);
 _K.scene('home', _HOME);
 _K.scene('shop', _SHOP);
+_K.scene('story', _STORY);
 
 _K.go('home',PLAYER_DATA);
 //_K.go('game-desert',PLAYER_DATA);
