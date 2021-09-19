@@ -26,7 +26,7 @@ Base for a Gas Station Tycoon Game.
 - Added own gas pump sprite, second pump buyable and functionable
 - Added own sprite for street and the refueling minigame, street is now repairable.
 - Added dumpster with flies
-- Added own sprite for house (not finished yet)
+- Added own sprite for house
 
 
 //TODO
