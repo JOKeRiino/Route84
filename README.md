@@ -21,17 +21,23 @@ Base for a Gas Station Tycoon Game.
 - Added Start Menu
 - Added working shop and shop button
 
-0.4.4
+0.4.7
 ` added refuling minigame`
 - Added own gas pump sprite, second pump buyable and functionable
 - Added own sprite for street and the refueling minigame, street is now repairable.
 - Added dumpster with flies
 - Added own sprite for house
+- Added own sprite for all cars with animation
+- Changed respawn on player cars
+- all car props change according to day/night cycle
+
+0.5.0
+` added level and xp system that continuously raises fuelprices `
+
 
 
 //TODO
 
-- let shopped items change game mechanics
-- add level/exp system -> higher level = more money from petrol
+- add clerk
 - Add Story capabilities
 - Add Story (add mayor and debt system)

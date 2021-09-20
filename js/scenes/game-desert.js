@@ -22,9 +22,9 @@ export default function _GAME_DESERT (PLAYER_DATA) {
     ])
     let __HOUSE = add([
         sprite("house-c1-u1-day"),
-        pos(239,124),
+        pos(239,111),
         layer('obj'),
-        scale(1.8),
+        scale(1.8,1.9),
     ])
 
     //OBJ1 SPRITES
@@ -86,17 +86,8 @@ export default function _GAME_DESERT (PLAYER_DATA) {
             occupied: false,
         }
     ])
-    //hide the second gas pumps
+    //hide the second gas pump
     every("amount2", (obj) => {obj.hidden = true;})
-    //!PATCH THIS OUT!!! :
-    let __HITBOX = add([
-        rect(1,80),
-        pos(-150,300),
-        color(1,1,1,1),
-        layer('obj'),
-        area(),
-        "wall"
-    ])
 
 
     //UI SPRITES
@@ -138,7 +129,7 @@ export default function _GAME_DESERT (PLAYER_DATA) {
             value: PLAYER_DATA.SCORE
         }
     ])
-    const UI_PAUSE = add([
+    add([
         sprite('pause-button'),
         pos(580,0),
         layer('ui'),
@@ -164,7 +155,7 @@ export default function _GAME_DESERT (PLAYER_DATA) {
         scale(.205),
         layer("ui")
     ])
-    const UI_SHOP = add([
+    add([
         sprite('shop-button'),
         pos(63,30),
         layer('ui'),
@@ -178,25 +169,97 @@ export default function _GAME_DESERT (PLAYER_DATA) {
         })
     ])
     add([text("SHOP"),pos(73,33),layer('ui'),scale(.25)]);
+    add([
+        sprite("level-bar"),
+        pos(139,-10),
+        layer('ui'),
+        scale(2.5)
+    ])
+    add([
+        rect(43,3),
+        scale(2.5),
+        layer('ui'),
+        pos(165,5),
+        color(59,232,245),
+        "lvlbar"
+    ])
+    let UI_LVL = add([
+        sprite("level-bar-progress"),
+        pos(272,-10),
+        layer('ui'),
+        scale(2.5),
+    ])
+    let UI_LVL_COUNT = add([
+        text("LVL: " +PLAYER_DATA.LVL),
+        pos(168,20),
+        layer('ui'),
+        scale(.2),
+        color(180,232,245),
+    ])
+
+    //UPDATE PLAYER XP AND LVL CONSTANTLY
+    action("lvlbar", (bar) => {
+        bar.width = PLAYER_DATA.XP * .43 / (PLAYER_DATA.LVL/10 + 1)
+        UI_LVL.pos.x = Math.floor(bar.pos.x + (bar.width * 2.49));
+        if(UI_LVL.pos.x >= 272) {
+
+            PLAYER_DATA.XP -= (100 * (PLAYER_DATA.LVL/10 + 1));
+            PLAYER_DATA.LVL++;
+            UI_LVL_COUNT.text = "LVL: " +PLAYER_DATA.LVL;
+
+            let lvlplus = add([
+                text("LVL +"),
+                pos(300,0),
+                layer('ui'),
+                scale(.3),
+                color(180,232,245),
+                'lvl-label'
+            ])
+            wait(.9, () => {
+                lvlplus.destroy();
+            })
+        }
+    })
 
     //SPAWN CARS IN LOOP
     loop(Math.floor((Math.random() * (60 - 22) + 22)), () => {
         if(get("car").length < 3) {
-            createRandomCar();
+            if(PLAYER_DATA.DAY_NIGHT_COUNT % 2 != 0){
+                createRandomCarNight();
+            }
+            else {
+                createRandomCar();
+            }
         }
     })
-    //Lets all Cars drive
+    //Lets all Cars drive and destroy cars that drive out of screen
     action("car", (car) => {
         car.move(car.dir.scale(car.speed));
+        if (car.pos.x < -150) {
+            destroy(car);
+            wait(Math.floor(Math.random() * (5 - 1) + 1), () => {
+                if(PLAYER_DATA.DAY_NIGHT_COUNT % 2 != 0){
+                    createRandomCarNight();
+                }
+                else {
+                    createRandomCar();
+                }
+            })
+        }
     })
 
     //SPAWN FILLER CARS IN LOOP
     loop(Math.floor((Math.random() * (20 - 5) + 5)), () => {
         if(get("filler").length < 2) {
-            createFillerCar();
+            if(PLAYER_DATA.DAY_NIGHT_COUNT % 2 != 0){
+                createFillerCarNight();
+            }
+            else {
+                createFillerCar();
+            }
         }
     })
-    //Lets filler cars drive and destroys them
+    //Lets filler cars drive and destroys them if they drive out of screen
     action("filler", (car) => {
         car.move(car.dir.scale(car.speed));
         if (car.pos.x > 700) {
@@ -204,7 +267,6 @@ export default function _GAME_DESERT (PLAYER_DATA) {
         }
     })
 
-    //day-night-cycle (60secs)
     //! CHANGE SPRITES ACCORDING TO PLAYER INVENTORY (BOUGHT ITEMS)
     const inventory = PLAYER_DATA.INVENTORY.CHAPTER1
     if(inventory[0].amount == 2) {
@@ -216,6 +278,7 @@ export default function _GAME_DESERT (PLAYER_DATA) {
         __DUMPSTER.hidden = true;
     }
 
+    //?day-night-cycle (60secs)
     loop(60, ()=> {
         if(PLAYER_DATA.DAY_NIGHT_COUNT % 2 === 0) {
             PLAYER_DATA.DAY_NIGHT_COUNT++;
@@ -225,6 +288,23 @@ export default function _GAME_DESERT (PLAYER_DATA) {
             __DUMPSTER.use(sprite("dumpster-night", {anim:'idle',animSpeed:.6}));
             __PUMP.use(sprite("gp-c1-u"+ inventory[0].lvl +"-night"));
             __PUMP2.use(sprite("gp-c1-u"+ inventory[0].lvl +"-night"));
+            every("car", (car)=> {
+                car.stop();
+                if(car.speed != 0) {
+                    car.use(sprite(car.type + "-night", {anim:'idle',animSpeed:.4}));
+                }
+                else {
+                    car.use(sprite(car.type + "-night"));
+                }
+            })
+            every("filler", (car)=> {
+                car.stop();
+                car.use(sprite(car.type + "-night", {
+                    flipX: true,
+                    anim: 'idle', 
+                    animSpeed: .4
+                }));
+            })
         }
         else {
             PLAYER_DATA.DAY_NIGHT_COUNT++;
@@ -234,6 +314,23 @@ export default function _GAME_DESERT (PLAYER_DATA) {
             __DUMPSTER.use(sprite("dumpster-day", {anim:'idle',animSpeed:.6}));
             __PUMP.use(sprite("gp-c1-u"+ inventory[0].lvl +"-day"));
             __PUMP2.use(sprite("gp-c1-u"+ inventory[0].lvl +"-day"));
+            every("car", (car)=> {
+                car.stop();
+                if(car.speed != 0) {
+                    car.use(sprite(car.type + "-day", {anim:'idle',animSpeed:.4}));
+                }
+                else {
+                    car.use(sprite(car.type + "-day"));
+                }
+            })
+            every("filler", (car)=> {
+                car.stop();
+                car.use(sprite(car.type + "-day", {
+                    flipX: true,
+                    anim: 'idle', 
+                    animSpeed: .4
+                }));
+            })
         }
     })
     //clock controller (5secs per hour)
@@ -250,6 +347,7 @@ export default function _GAME_DESERT (PLAYER_DATA) {
 
     __PUMP.collides("car", (car) => {
         if(!__PUMP.occupied && Math.random() >= .05){
+            car.stop();
             car.speed = 0;
             car.pump = 1;
             __PUMP.occupied = !__PUMP.occupied;
@@ -258,18 +356,12 @@ export default function _GAME_DESERT (PLAYER_DATA) {
     })
     __PUMP2.collides("car", (car) => {
         if(!__PUMP2.occupied && !car.isFueled && Math.random() >= .05){
+            car.stop();
             car.speed = 0;
             car.pump = 2;
             __PUMP2.occupied = !__PUMP2.occupied;
             __PUMP2_LIGHT.color = rgb(255,0,0);
         }
-    })
-
-    __HITBOX.collides("car", (car) => {
-        destroy(car);
-        wait(Math.floor(Math.random() * (5 - 1) + 1), () => {
-            createRandomCar();
-        })
     })
 
     //CLICK LISTENERS
@@ -281,6 +373,15 @@ export default function _GAME_DESERT (PLAYER_DATA) {
                 [380,390,391,420],
                 [180,190,191,220],
             ]
+
+            let FUELAM = Math.floor(((Math.random() * (70 - 10) + 10)));
+            let PAYMENT
+
+            if(!car.is("special")) {
+                PAYMENT = Math.floor(FUELAM * (1 + PLAYER_DATA.LVL/8));
+            } else {
+                PAYMENT = Math.floor(200 * (1 + PLAYER_DATA.LVL/5));
+            }
 
             //? MINIGAME SPRITES
             let tankceil = add([
@@ -348,6 +449,22 @@ export default function _GAME_DESERT (PLAYER_DATA) {
                 layer("ui"),
                 "mg"
             ])
+            add([
+                text("$"+PAYMENT),
+                pos(pump[car.pump-1][0]+75,107),
+                layer("ui"),
+                scale(.20),
+                color(30,30,30),
+                "mg"
+            ])
+            add([
+                text(FUELAM + "L"),
+                pos(pump[car.pump-1][0]+75,83),
+                layer("ui"),
+                scale(.2),
+                color(30,30,30),
+                "mg"
+            ])
             //? UPDATE THE PROGRESS BAR
             action("progress", (obj) => {
                 let fuelY = fuel.pos.y
@@ -372,10 +489,11 @@ export default function _GAME_DESERT (PLAYER_DATA) {
 
                 car.isFueled = true;
                 car.clicked = false;
+                car.play("idle", {animSpeed: .4});
                 if(car.is("sport")){
                     car.speed = 200;
                 }
-                else if(car.is("sedan")){
+                else if(car.is("jeep")){
                     car.speed = 180;
                 }
                 else if(car.is("camper")){
@@ -397,13 +515,7 @@ export default function _GAME_DESERT (PLAYER_DATA) {
             goal.on("death", () => {
                 every("mg", destroy);
                 console.log("game won");
-                let PAYMENT
 
-                if(!car.is("special")) {
-                    PAYMENT = Math.floor((Math.random() * (65 - 12) + 12));
-                } else {
-                    PAYMENT = 200;
-                }
                 PLAYER_DATA.SCORE += PAYMENT;
             
                 let UI_PAYMENTLABEL = add([
@@ -427,11 +539,12 @@ export default function _GAME_DESERT (PLAYER_DATA) {
 
                 car.isFueled = true;
                 car.clicked = false;
+                car.play("idle", {animSpeed: .4});
 
                 if(car.is("sport")){
                     car.speed = 200;
                 }
-                else if(car.is("sedan")){
+                else if(car.is("jeep")){
                     car.speed = 180;
                 }
                 else if(car.is("camper")){
@@ -448,6 +561,7 @@ export default function _GAME_DESERT (PLAYER_DATA) {
                     __PUMP2_LIGHT.color = rgb(0,255,0);
                 }
                 UI_CASHLABEL.text = '$' + PLAYER_DATA.SCORE;
+                PLAYER_DATA.XP += 14;
             })
         }
     })
@@ -457,64 +571,17 @@ export default function _GAME_DESERT (PLAYER_DATA) {
     clicks("shop", () => {
         go("shop", PLAYER_DATA);
     })
-
-    //FUNCTIONS IN SCOPE
-    
-    function winGame(car) {
-
-        let PAYMENT
-        if(!car.is("special")) {
-            PAYMENT = Math.floor((Math.random() * (65 - 12) + 12));
-        } else {
-            PAYMENT = 200;
-        }
-        PLAYER_DATA.SCORE += PAYMENT;
-    
-        let UI_PAYMENTLABEL = add([
-            text('$' + PAYMENT),
-            pos(420,260),
-            layer('ui'),
-            scale(.3),
-            area(),
-            color(0,255,0),
-            {
-                dir: vec2(0,-1),
-                speed: 140,
-            }
-        ])
-        UI_PAYMENTLABEL.action(() => {
-            UI_PAYMENTLABEL.move(UI_PAYMENTLABEL.dir.scale(UI_PAYMENTLABEL.speed));
-        })
-        wait(.4, () => {
-            destroy(UI_PAYMENTLABEL);
-        })
-        
-        if(car.is("sport")){
-            car.speed = 200;
-        }
-        else if(car.is("sedan")){
-            car.speed = 180;
-        }
-        else if(car.is("camper")){
-            car.speed = 160;
-        } else {
-            car.speed = 120;
-        }
-        __PUMP.occupied = !__PUMP.occupied;
-        __PUMP_LIGHT.color = rgb(0,255,0);
-        UI_CASHLABEL.text = '$' + PLAYER_DATA.SCORE;
-    }
 }
 
 //FUCTIONS OoSCOPE
 function createRandomCar () {
     if(get("car").length < 3) {
         let random = Math.random();
-        if(random >= .97) {
+        if(random >= .98) {
             add([
-                sprite("special-car", {
-                    anim: "drive",
-                    animSpeed: .4
+                sprite("specialcar-day", {
+                    anim: "idle",
+                    speed: .4
                 }),
                 pos(600,320),
                 layer('obj'),
@@ -533,19 +600,23 @@ function createRandomCar () {
                     clicked: false,
                     pump: 0,
                     isFueled: false,
+                    type: "specialcar"
                 }
             ])
         }
-        else if(random >= .6) {
+        else if(random >= .62) {
             add([
-                sprite("camper"),
-                pos(600,297),
+                sprite("camper-day", {
+                    anim: "idle",
+                    speed: .4
+                }),
+                pos(600,305),
                 layer('obj'),
-                scale(.50),
+                scale(1.3),
                 area({
-                    width: 245,
-                    height: 120,
-                    offset: vec2(20,10),
+                    width: 100,
+                    height: 42,
+                    offset: vec2(20,0),
                     cursor: "pointer",
                 }),
                 "car",
@@ -556,42 +627,50 @@ function createRandomCar () {
                     clicked: false,
                     pump: 0,
                     isFueled: false,
+                    type: "camper"
                 }
             ])
         }
-        else if(random >= .3) {
+        else if(random >= .31) { //.3
             add([
-                sprite("sedan"),
-                pos(600,285),
+                sprite("jeep-day", {
+                    anim: "idle",
+                    speed: .4
+                }),
+                pos(600,305),
                 layer('obj'),
-                scale(.6),
+                scale(1.3),
                 area({
-                    width: 230,
-                    height: 90,
-                    offset: vec2(20,30),
+                    width: 100,
+                    height: 45,
+                    offset: vec2(20,5),
                     cursor: "pointer",
                 }),
                 "car",
-                "sedan",
+                "jeep",
                 {
                     dir: vec2(-1,0),
                     speed: 180,
                     clicked: false,
                     pump: 0,
                     isFueled: false,
+                    type: "jeep"
                 }
             ])
         }
         else {
             add([
-                sprite("sportscar"),
-                pos(600,280),
+                sprite("sportscar-day", {
+                    anim: "idle",
+                    speed: .4,
+                }),
+                pos(600,310),
                 layer('obj'),
-                scale(.6),
+                scale(1.3),
                 area({
-                    width: 250,
-                    height: 100,
-                    offset: vec2(20,30),
+                    width: 95,
+                    height: 37,
+                    offset: vec2(20,0),
                     cursor: "pointer",
                 }),
                 "car",
@@ -602,6 +681,121 @@ function createRandomCar () {
                     clicked: false,
                     pump: 0,
                     isFueled: false,
+                    type: "sportscar"
+                }
+            ])
+        }
+    }
+}
+
+function createRandomCarNight () {
+    if(get("car").length < 3) {
+        let random = Math.random();
+        if(random >= .98) {
+            add([
+                sprite("specialcar-night", {
+                    anim: "idle",
+                    animSpeed: .4
+                }),
+                pos(600,305),
+                layer('obj'),
+                scale(1.3),
+                area({
+                    width: 100,
+                    height: 38,
+                    offset: vec2(15,0),
+                    cursor: "pointer",
+                }),
+                "car",
+                "special",
+                {
+                    dir: vec2(-1,0),
+                    speed: 120,
+                    clicked: false,
+                    pump: 0,
+                    isFueled: false,
+                    type: "specialcar"
+                }
+            ])
+        }
+        else if(random >= .62) { //.6
+            add([
+                sprite("camper-night", {
+                    anim: "idle",
+                    AnimSpeed: .4
+                }),
+                pos(600,305),
+                layer('obj'),
+                scale(1.3),
+                area({
+                    width: 100,
+                    height: 42,
+                    offset: vec2(20,0),
+                    cursor: "pointer",
+                }),
+                "car",
+                "camper",
+                {
+                    dir: vec2(-1,0),
+                    speed: 160,
+                    clicked: false,
+                    pump: 0,
+                    isFueled: false,
+                    type: "camper"
+                }
+            ])
+        }
+        else if(random >= .31) { //.3
+            add([
+                sprite("jeep-night", {
+                    anim: "idle",
+                    animSpeed: .4
+                }),
+                pos(600,305),
+                layer('obj'),
+                scale(1.3),
+                area({
+                    width: 100,
+                    height: 45,
+                    offset: vec2(20,5),
+                    cursor: "pointer",
+                }),
+                "car",
+                "jeep",
+                {
+                    dir: vec2(-1,0),
+                    speed: 180,
+                    clicked: false,
+                    pump: 0,
+                    isFueled: false,
+                    type: "jeep"
+                }
+            ])
+        }
+        else {
+            add([
+                sprite("sportscar-night", {
+                    anim: "idle",
+                    animSpeed: .4,
+                }),
+                pos(600,310),
+                layer('obj'),
+                scale(1.3),
+                area({
+                    width: 95,
+                    height: 37,
+                    offset: vec2(20,0),
+                    cursor: "pointer",
+                }),
+                "car",
+                "sport",
+                {
+                    dir: vec2(-1,0),
+                    speed: 200,
+                    clicked: false,
+                    pump: 0,
+                    isFueled: false,
+                    type: "sportscar"
                 }
             ])
         }
@@ -611,11 +805,11 @@ function createRandomCar () {
 function createFillerCar () {
     if(get("filler").length < 2) {
         let random = Math.random();
-        if(random >= .97) {
+        if(random >= .93) {
             add([
-                sprite("special-car", {
+                sprite("specialcar-day", {
                     flipX: true,
-                    anim: "drive",
+                    anim: "idle",
                     animSpeed: .4
                 }),
                 pos(-150,360),
@@ -625,51 +819,139 @@ function createFillerCar () {
                 {
                     dir: vec2(1,0),
                     speed: 120,
+                    type: "specialcar"
                 }
             ])
         }
-        else if(random >= .6) {
+        else if(random >= .60) {
             add([
-                sprite("camper", {
+                sprite("camper-day", {
                     flipX: true,
+                    anim: "idle",
+                    animSpeed: .4
                 }),
                 pos(-150,340),
                 layer('obj2'),
-                scale(.60),
+                scale(1.5),
                 "filler",
                 {
                     dir: vec2(1,0),
                     speed: 160,
+                    type: "camper"
                 }
             ])
         }
-        else if(random >= .3) {
+        else if(random >= .30) {
             add([
-                sprite("sedan", {
+                sprite("jeep-day", {
                     flipX: true,
+                    anim: "idle",
+                    animSpeed: .4
                 }),
-                pos(-150,320),
+                pos(-150,335),
                 layer('obj2'),
-                scale(.75),
+                scale(1.5),
                 "filler",
                 {
                     dir: vec2(1,0),
                     speed: 180,
+                    type: "jeep"
                 }
             ])
         }
         else {
             add([
-                sprite("sportscar", {
+                sprite("sportscar-day", {
                     flipX: true,
+                    anim: "idle",
+                    animSpeed: .4,
                 }),
-                pos(-150,310),
+                pos(-150,350),
                 layer('obj2'),
-                scale(.7),
+                scale(1.5),
                 "filler",
                 {
                     dir: vec2(1,0),
                     speed: 200,
+                    type: "sportscar"
+                }
+            ])
+        }
+    }
+}
+
+function createFillerCarNight () {
+    if(get("filler").length < 2) {
+        let random = Math.random();
+        if(random >= .93) {
+            add([
+                sprite("specialcar-night", {
+                    flipX: true,
+                    anim: "idle",
+                    animSpeed: .4
+                }),
+                pos(-150,360),
+                layer('obj2'),
+                scale(1.5),
+                "filler",
+                {
+                    dir: vec2(1,0),
+                    speed: 120,
+                    type: "specialcar"
+                }
+            ])
+        }
+        else if(random >= .60) {
+            add([
+                sprite("camper-night", {
+                    flipX: true,
+                    anim: "idle",
+                    animSpeed: .4
+                }),
+                pos(-150,340),
+                layer('obj2'),
+                scale(1.5),
+                "filler",
+                {
+                    dir: vec2(1,0),
+                    speed: 160,
+                    type: "camper"
+                }
+            ])
+        }
+        else if(random >= .30) {
+            add([
+                sprite("jeep-night", {
+                    flipX: true,
+                    anim: "idle",
+                    animSpeed: .4
+                }),
+                pos(-150,335),
+                layer('obj2'),
+                scale(1.5),
+                "filler",
+                {
+                    dir: vec2(1,0),
+                    speed: 180,
+                    type: "jeep"
+                }
+            ])
+        }
+        else {
+            add([
+                sprite("sportscar-night", {
+                    flipX: true,
+                    anim: "idle",
+                    animSpeed: .4,
+                }),
+                pos(-150,350),
+                layer('obj2'),
+                scale(1.5),
+                "filler",
+                {
+                    dir: vec2(1,0),
+                    speed: 200,
+                    type: "sportscar"
                 }
             ])
         }
