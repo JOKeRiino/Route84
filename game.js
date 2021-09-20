@@ -7,11 +7,10 @@ import _SHOP from "./js/scenes/shop.js";
 
 const PLAYER_DATA = {
     'NEWGAME': true,
-    'SCORE' : 211,
+    'SCORE' : 193,
     'DAY_NIGHT_COUNT': 1,
     'GAME_HOUR' : 5,
     'GAME_DAY' : 1,
-    'MULTIPLIER': 1,
     'LVL' : 1,
     'XP': 0,
     'INVENTORY': {
@@ -200,14 +199,79 @@ loadSpriteAtlas('src/street/dumpster-bitmap.png', { //OWN SPRITE
     }
 })
 
-loadSprite('sportscar', 'src/cars/sportscar-night.png'); //TODO CHANGE SPRITE TO OWN
-loadSprite('camper', 'src/cars/spr_camper_0.png'); //TODO CHANGE SPRITE TO OWN
-loadSprite('sedan', 'src/cars/spr_bluecar_0.png'); //TODO CHANGE SPRITE TO OWN
-loadSprite('special-car', 'src/cars/cargo.png', { //TODO CHANGE SPRITE TO OWN
-    sliceX: 2,
-    sliceY: 0,
-    anims: { drive: { from: 0, to: 1, loop: true }, },
+loadSpriteAtlas('src/cars/sports-car-bitmap.png', { //OWN SPRITE
+    "sportscar-day": {
+        x: 0,
+        y: 0,
+        width: 222,
+        height: 38,
+        sliceX: 2,
+        anims: {idle:{from:0,to:1, loop: true}}
+    },
+    "sportscar-night": {
+        x: 0,
+        y: 38,
+        width: 222,
+        height: 38,
+        sliceX: 2,
+        anims: {idle:{from:0,to:1, loop: true}}
+    }
 });
+loadSpriteAtlas('src/cars/special-car-bitmap.png', { //OWN SPRITE
+    "specialcar-day": {
+        x: 0,
+        y: 0,
+        width: 222,
+        height: 38,
+        sliceX: 2,
+        anims: {idle:{from:0,to:1, loop: true}}
+    },
+    "specialcar-night": {
+        x: 0,
+        y: 38,
+        width: 222,
+        height: 38,
+        sliceX: 2,
+        anims: {idle:{from:0,to:1, loop: true}}
+    }
+});
+loadSpriteAtlas('src/cars/camper-bitmap.png', { //OWN SPRITE
+    "camper-day": {
+        x: 0,
+        y: 0,
+        width: 222,
+        height: 45,
+        sliceX: 2,
+        anims: {idle:{from:0, to: 1, loop:true}}
+    },
+    "camper-night": {
+        x: 0,
+        y: 45,
+        width: 222,
+        height: 45,
+        sliceX: 2,
+        anims: {idle:{from:0, to: 1, loop:true}}
+    }
+})
+loadSpriteAtlas('src/cars/jeep-bitmap.png', { //OWN SPRITE
+    "jeep-day": {
+        x:0,
+        y:0,
+        width: 222,
+        height: 45,
+        sliceX: 2,
+        anims: {idle:{from:0, to:1, loop:true}}
+    },
+    "jeep-night": {
+        x:0,
+        y:45,
+        width: 222,
+        height: 45,
+        sliceX: 2,
+        anims: {idle:{from:0, to:1, loop:true}}
+    }
+});
+
 
 loadSprite('home-bg', 'src/backgrounds/ezgif.com-gif-maker.png', { //OWN SPRITE
     sliceX: 5,
@@ -268,9 +332,9 @@ loadSpriteAtlas("src/gui/GUI.png", { //TODO CHANGE SPRITE TO OWN?!
         height: 16
     },
     "level-bar-progress": {
-        x: 0,
-        y: 16,
-        width: 64,
+        x: 45,
+        y: 0,
+        width: 5,
         height: 16
     }
 })
@@ -280,7 +344,7 @@ _K.scene('game-desert', _GAME_DESERT);
 _K.scene('pause', _PAUSE);
 _K.scene('home', _HOME);
 _K.scene('shop', _SHOP);
-_K.scene('story', _STORY);
+//_K.scene('story', _STORY);
 
 _K.go('home',PLAYER_DATA);
 //_K.go('game-desert',PLAYER_DATA);

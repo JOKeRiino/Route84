@@ -220,19 +220,24 @@ export default function _SHOP (PLAYER_DATA) {
             //TODO Hier kommen die dinge hin die sich verändern nach dem kauf!
             if(index == 0) {
                 inventory[0].amount++;
+                PLAYER_DATA.XP += 100;
             }
             else if(index == 1) {
                 inventory[1].amount++;
+                PLAYER_DATA.XP += 140;
             }
             else if(index == 2) {
                 inventory[1].lvl++;
+                PLAYER_DATA.XP += 20;
             }
             else if(index == 3) {
                 inventory[2].lvl++;
                 inventory[0].lvl++;
+                PLAYER_DATA.XP += 200;
             }
             else if(index == 4) {
                 inventory[3].lvl++;
+                PLAYER_DATA.XP += 20;
             }
             purchaseText("Shopkeeper (Pete)\n\nThank you!")
             wait(.5, () => {
