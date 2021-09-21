@@ -113,7 +113,7 @@ export default function _SHOP (PLAYER_DATA) {
         scale(5,3.5),
         {
             index: 2,
-            cost: pD[2].price,
+            cost: pD[2].price * PLAYER_DATA.INVENTORY.CHAPTER1[1].lvl,
             available: pD[2].available,
         }
     ])
@@ -170,7 +170,7 @@ export default function _SHOP (PLAYER_DATA) {
         scale(.2)
     ])
     add([
-        text(pD[2].name + "\n$" + pD[2].price + "          (" + pD[2].available + "x)"),
+        text(pD[2].name + "\n$" + pD[2].price * PLAYER_DATA.INVENTORY.CHAPTER1[1].lvl + "          (" + pD[2].available + "x)"),
         layer("ui"),
         pos(130,222),
         scale(.2)
@@ -202,6 +202,34 @@ export default function _SHOP (PLAYER_DATA) {
         
         if(PLAYER_DATA.SCORE >= sb.cost && sb.available > 0){
             sb.color = rgb(0,255,0,.3)
+        }
+    })
+
+    //MAKE CLERK AVAILABLE WHEN SECOND PUMP IS BOUGHT
+    action("sb_2", (b) => {
+        if(pD[0].available === 0 && pD[1].available != 0){
+            b.color = rgb(0,255,0,.3);
+            b.area.width = 46;
+            b.area.height = 14;
+        }
+        else{ 
+            b.color = rgb(0,0,0,.3)
+            b.area.width = 0;
+            b.area.height = 0;
+        }
+    })
+
+    //MAKE CLERK UPDATES AVAILABLE WHEN CLERK IS BOUGHT
+    action("sb_3", (b) => {
+        if(pD[1].available === 0 && pD[2].available != 0){
+            b.color = rgb(0,255,0,.3)
+            b.area.width = 46;
+            b.area.height = 14;
+        }
+        else {
+            b.color = rgb(0,0,0,.3);
+            b.area.width = 0;
+            b.area.height = 0;
         }
     })
 
@@ -241,6 +269,11 @@ export default function _SHOP (PLAYER_DATA) {
             }
             purchaseText("Shopkeeper (Pete)\n\nThank you!")
             wait(.5, () => {
+                if(PLAYER_DATA.GAME_HOUR > 19 || PLAYER_DATA.GAME_HOUR < 6){
+                    PLAYER_DATA.ASSETS_NIGHT = false
+                } else {
+                    PLAYER_DATA.ASSETS_NIGHT = true
+                }
                 _K.go('game-desert',PLAYER_DATA);
             })
         }
@@ -254,6 +287,11 @@ export default function _SHOP (PLAYER_DATA) {
 
 
     clicks("back", () => {
+        if(PLAYER_DATA.GAME_HOUR > 19 || PLAYER_DATA.GAME_HOUR < 6){
+            PLAYER_DATA.ASSETS_NIGHT = false
+        } else {
+            PLAYER_DATA.ASSETS_NIGHT = true
+        }
         _K.go('game-desert',PLAYER_DATA);
     })
 
