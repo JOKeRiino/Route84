@@ -53,6 +53,11 @@ export default function _PAUSE (PLAYER_DATA) {
     add([ text("Quit"),pos(313,245),layer("ui"),scale(.4)]);
 
     clicks("resume", () => {
+        if(PLAYER_DATA.GAME_HOUR > 19 || PLAYER_DATA.GAME_HOUR < 6){
+            PLAYER_DATA.ASSETS_NIGHT = false
+        } else {
+            PLAYER_DATA.ASSETS_NIGHT = true
+        }
         _K.go('game-desert',PLAYER_DATA);
     })
 

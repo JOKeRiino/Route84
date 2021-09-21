@@ -7,8 +7,9 @@ import _SHOP from "./js/scenes/shop.js";
 
 const PLAYER_DATA = {
     'NEWGAME': true,
-    'SCORE' : 193,
-    'DAY_NIGHT_COUNT': 1,
+    'SCORE' : 215,
+    'IS_NIGHT': false,
+    'ASSETS_NIGHT': false,
     'GAME_HOUR' : 5,
     'GAME_DAY' : 1,
     'LVL' : 1,
@@ -21,7 +22,7 @@ const PLAYER_DATA = {
             },
             { //clerk
                 'amount': 0,
-                'lvl': 0
+                'lvl': 1
             },
             { //house
                 'lvl': 1
@@ -46,7 +47,7 @@ const PLAYER_DATA = {
             },
             { //clerkupdate
                 'name': 'Train Clerk',
-                'available': 10,
+                'available': 9,
                 'price' : 500
             },
             { //house
@@ -198,7 +199,7 @@ loadSpriteAtlas('src/street/dumpster-bitmap.png', { //OWN SPRITE
         anims: {idle:{from:0,to:3, loop: true}}
     }
 })
-
+loadSprite('clerk', 'src/people/clerk.png'); //OWN SPRITE
 loadSpriteAtlas('src/cars/sports-car-bitmap.png', { //OWN SPRITE
     "sportscar-day": {
         x: 0,
@@ -271,8 +272,20 @@ loadSpriteAtlas('src/cars/jeep-bitmap.png', { //OWN SPRITE
         anims: {idle:{from:0, to:1, loop:true}}
     }
 });
-
-
+loadSpriteAtlas('src/gui/emotes.png', { //OWN SPRITE
+    "game-won": {
+        x: 0,
+        y: 0,
+        width: 16,
+        height: 16,
+    },
+    "game-lost": {
+        x: 16,
+        y: 0,
+        width: 16,
+        height: 16,
+    }
+})
 loadSprite('home-bg', 'src/backgrounds/ezgif.com-gif-maker.png', { //OWN SPRITE
     sliceX: 5,
     sliceY: 4,
@@ -280,7 +293,7 @@ loadSprite('home-bg', 'src/backgrounds/ezgif.com-gif-maker.png', { //OWN SPRITE
 });
 loadSprite('shopkeeper', 'src/people/shopkeeper.png'); //OWN SPRITE
 loadSprite('jacob', 'src/people/jacob.png'); //OWN SPRITE
-loadSprite('speech', 'src/gui/comic-2.png')
+loadSprite('speech', 'src/gui/comic-2.png');
 //UI Sprite Atlas
 loadSpriteAtlas("src/gui/GUI.png", { //TODO CHANGE SPRITE TO OWN?!
     "pause-button": {

@@ -3,7 +3,6 @@ import _K from '../kaboom.js'
 export default function _GAME_DESERT (PLAYER_DATA) {
     //! CHECK IF NEW GAME
     if(!PLAYER_DATA.NEWGAME){
-        PLAYER_DATA.DAY_NIGHT_COUNT--;
         PLAYER_DATA.GAME_HOUR--;
     }
     if(PLAYER_DATA.NEWGAME){
@@ -86,8 +85,19 @@ export default function _GAME_DESERT (PLAYER_DATA) {
             occupied: false,
         }
     ])
+    let __CLERK = add([
+        sprite('clerk', {
+            flipX: true
+        }),
+        pos(294,269),
+        layer('obj'),
+        scale(2),
+        "clerk"
+    ])
     //hide the second gas pump
     every("amount2", (obj) => {obj.hidden = true;})
+    //hide the clerk
+    __CLERK.hidden = true;
 
 
     //UI SPRITES
@@ -224,7 +234,7 @@ export default function _GAME_DESERT (PLAYER_DATA) {
     //SPAWN CARS IN LOOP
     loop(Math.floor((Math.random() * (60 - 22) + 22)), () => {
         if(get("car").length < 3) {
-            if(PLAYER_DATA.DAY_NIGHT_COUNT % 2 != 0){
+            if(PLAYER_DATA.IS_NIGHT){
                 createRandomCarNight();
             }
             else {
@@ -238,7 +248,7 @@ export default function _GAME_DESERT (PLAYER_DATA) {
         if (car.pos.x < -150) {
             destroy(car);
             wait(Math.floor(Math.random() * (5 - 1) + 1), () => {
-                if(PLAYER_DATA.DAY_NIGHT_COUNT % 2 != 0){
+                if(PLAYER_DATA.IS_NIGHT){
                     createRandomCarNight();
                 }
                 else {
@@ -251,7 +261,7 @@ export default function _GAME_DESERT (PLAYER_DATA) {
     //SPAWN FILLER CARS IN LOOP
     loop(Math.floor((Math.random() * (20 - 5) + 5)), () => {
         if(get("filler").length < 2) {
-            if(PLAYER_DATA.DAY_NIGHT_COUNT % 2 != 0){
+            if(PLAYER_DATA.IS_NIGHT){
                 createFillerCarNight();
             }
             else {
@@ -274,66 +284,15 @@ export default function _GAME_DESERT (PLAYER_DATA) {
         __PUMP2.area.height = 50;
         __PUMP2.area.width = 5;
     }
+    if(inventory[1].amount == 1) {
+        __CLERK.hidden = false;
+    }
     if(inventory[3].lvl == 2){
         __DUMPSTER.hidden = true;
     }
 
-    //?day-night-cycle (60secs)
-    loop(60, ()=> {
-        if(PLAYER_DATA.DAY_NIGHT_COUNT % 2 === 0) {
-            PLAYER_DATA.DAY_NIGHT_COUNT++;
-            __BG.use(sprite("bg-night"));
-            __STREET.use(sprite("street-c1-u"+inventory[3].lvl+"-night"));
-            __HOUSE.use(sprite("house-c1-u"+inventory[2].lvl+"-night"));
-            __DUMPSTER.use(sprite("dumpster-night", {anim:'idle',animSpeed:.6}));
-            __PUMP.use(sprite("gp-c1-u"+ inventory[0].lvl +"-night"));
-            __PUMP2.use(sprite("gp-c1-u"+ inventory[0].lvl +"-night"));
-            every("car", (car)=> {
-                car.stop();
-                if(car.speed != 0) {
-                    car.use(sprite(car.type + "-night", {anim:'idle',animSpeed:.4}));
-                }
-                else {
-                    car.use(sprite(car.type + "-night"));
-                }
-            })
-            every("filler", (car)=> {
-                car.stop();
-                car.use(sprite(car.type + "-night", {
-                    flipX: true,
-                    anim: 'idle', 
-                    animSpeed: .4
-                }));
-            })
-        }
-        else {
-            PLAYER_DATA.DAY_NIGHT_COUNT++;
-            __BG.use(sprite("bg-day"));
-            __STREET.use(sprite("street-c1-u"+inventory[3].lvl+"-day"));
-            __HOUSE.use(sprite("house-c1-u"+inventory[2].lvl+"-day"));
-            __DUMPSTER.use(sprite("dumpster-day", {anim:'idle',animSpeed:.6}));
-            __PUMP.use(sprite("gp-c1-u"+ inventory[0].lvl +"-day"));
-            __PUMP2.use(sprite("gp-c1-u"+ inventory[0].lvl +"-day"));
-            every("car", (car)=> {
-                car.stop();
-                if(car.speed != 0) {
-                    car.use(sprite(car.type + "-day", {anim:'idle',animSpeed:.4}));
-                }
-                else {
-                    car.use(sprite(car.type + "-day"));
-                }
-            })
-            every("filler", (car)=> {
-                car.stop();
-                car.use(sprite(car.type + "-day", {
-                    flipX: true,
-                    anim: 'idle', 
-                    animSpeed: .4
-                }));
-            })
-        }
-    })
-    //clock controller (5secs per hour)
+
+    //clock and day/night controller (5secs per hour)
     loop(5, () => { 
         if(PLAYER_DATA.GAME_HOUR === 23){
             PLAYER_DATA.GAME_HOUR = 0;
@@ -342,8 +301,72 @@ export default function _GAME_DESERT (PLAYER_DATA) {
         } else {
             PLAYER_DATA.GAME_HOUR++;
         }
+
+        if(PLAYER_DATA.GAME_HOUR > 19 || PLAYER_DATA.GAME_HOUR < 6){
+            PLAYER_DATA.IS_NIGHT = true;
+            if(!PLAYER_DATA.ASSETS_NIGHT){
+                //console.log("Change sprites to night")
+                PLAYER_DATA.ASSETS_NIGHT = true;
+
+                __BG.use(sprite("bg-night"));
+                __STREET.use(sprite("street-c1-u"+inventory[3].lvl+"-night"));
+                __HOUSE.use(sprite("house-c1-u"+inventory[2].lvl+"-night"));
+                __DUMPSTER.use(sprite("dumpster-night", {anim:'idle',animSpeed:.6}));
+                __PUMP.use(sprite("gp-c1-u"+ inventory[0].lvl +"-night"));
+                __PUMP2.use(sprite("gp-c1-u"+ inventory[0].lvl +"-night"));
+                every("car", (car)=> {
+                    car.stop();
+                    if(car.speed != 0) {
+                        car.use(sprite(car.type + "-night", {anim:'idle',animSpeed:.4}));
+                    }
+                    else {
+                        car.use(sprite(car.type + "-night"));
+                    }
+                })
+                every("filler", (car)=> {
+                    car.stop();
+                    car.use(sprite(car.type + "-night", {
+                        flipX: true,
+                        anim: 'idle', 
+                        animSpeed: .4
+                    }));
+                });
+            }
+        }
+        else if (PLAYER_DATA.GAME_HOUR > 6 || PLAYER_DATA.GAME_HOUR < 19){
+            PLAYER_DATA.IS_NIGHT = false;
+            if(PLAYER_DATA.ASSETS_NIGHT){
+                //console.log("Change sprites to day")
+                PLAYER_DATA.ASSETS_NIGHT = false;
+
+                __BG.use(sprite("bg-day"));
+                __STREET.use(sprite("street-c1-u"+inventory[3].lvl+"-day"));
+                __HOUSE.use(sprite("house-c1-u"+inventory[2].lvl+"-day"));
+                __DUMPSTER.use(sprite("dumpster-day", {anim:'idle',animSpeed:.6}));
+                __PUMP.use(sprite("gp-c1-u"+ inventory[0].lvl +"-day"));
+                __PUMP2.use(sprite("gp-c1-u"+ inventory[0].lvl +"-day"));
+                every("car", (car)=> {
+                    car.stop();
+                    if(car.speed != 0) {
+                        car.use(sprite(car.type + "-day", {anim:'idle',animSpeed:.4}));
+                    }
+                    else {
+                        car.use(sprite(car.type + "-day"));
+                    }
+                })
+                every("filler", (car)=> {
+                    car.stop();
+                    car.use(sprite(car.type + "-day", {
+                        flipX: true,
+                        anim: 'idle', 
+                        animSpeed: .4
+                    }));
+                })
+            }
+        }
         UI_CLOCK.text = PLAYER_DATA.GAME_HOUR + ':00 ';
     })
+
 
     __PUMP.collides("car", (car) => {
         if(!__PUMP.occupied && Math.random() >= .05){
@@ -361,6 +384,110 @@ export default function _GAME_DESERT (PLAYER_DATA) {
             car.pump = 2;
             __PUMP2.occupied = !__PUMP2.occupied;
             __PUMP2_LIGHT.color = rgb(255,0,0);
+
+            //IF CLERK EXISTS CAR GETS REFUELED AUTOMATICALLY!
+            if(PLAYER_DATA.INVENTORY.CHAPTER1[1].ammount = 1){
+                car.clicked = true;
+                console.log("clerk refueles car!")
+                wait(2, () => {
+                    if(Math.random() <= (0 + (PLAYER_DATA.INVENTORY.CHAPTER1[1].lvl/10))){
+                        let PAYMENT
+
+                        if(!car.is("special")) {
+                            PAYMENT = Math.floor(Math.floor((Math.random() * (70 - 10) + 10)) * (1 + PLAYER_DATA.LVL/8));
+                        } else {
+                            PAYMENT = Math.floor(200 * (1 + PLAYER_DATA.LVL/5));
+                        }
+
+                        PLAYER_DATA.SCORE += PAYMENT;
+            
+                        let UI_CLERKLABEL = add([
+                            text('$' + PAYMENT),
+                            pos(220,260),
+                            layer('ui'),
+                            scale(.3),
+                            area(),
+                            color(0,255,0),
+                            {
+                                dir: vec2(0,-1),
+                                speed: 140,
+                            }
+                        ])
+                        UI_CLERKLABEL.action(() => {
+                            UI_CLERKLABEL.move(UI_CLERKLABEL.dir.scale(UI_CLERKLABEL.speed));
+                        })
+                        wait(.4, () => {
+                            destroy(UI_CLERKLABEL);
+                        })
+
+                        car.isFueled = true;
+                        car.clicked = false;
+                        car.play("idle", {animSpeed: .4});
+
+                        let emote = add([
+                            sprite("game-won"),
+                            pos(200,200),
+                            scale(1.4),
+                            layer('ui'),
+                            follow(car, vec2(25,-25))
+                        ])
+        
+                        wait(1.3, () => {
+                            destroy(emote);
+                        })
+
+                        if(car.is("sport")){
+                            car.speed = 200;
+                        }
+                        else if(car.is("jeep")){
+                            car.speed = 180;
+                        }
+                        else if(car.is("camper")){
+                            car.speed = 160;
+                        } else {
+                            car.speed = 120;
+                        }
+
+                        __PUMP2.occupied = !__PUMP2.occupied;
+                        __PUMP2_LIGHT.color = rgb(0,255,0);
+                        UI_CASHLABEL.text = '$' + PLAYER_DATA.SCORE;
+                        PLAYER_DATA.XP += 14;
+
+                    }
+                    else {
+                        car.isFueled = true;
+                        car.clicked = false;
+                        car.play("idle", {animSpeed: .4});
+
+                        let emote = add([
+                            sprite("game-lost"),
+                            pos(200,200),
+                            scale(1.4),
+                            layer('ui'),
+                            follow(car, vec2(25,-25))
+                        ])
+        
+                        wait(1.3, () => {
+                            destroy(emote);
+                        })
+
+                        if(car.is("sport")){
+                            car.speed = 200;
+                        }
+                        else if(car.is("jeep")){
+                            car.speed = 180;
+                        }
+                        else if(car.is("camper")){
+                            car.speed = 160;
+                        } else {
+                            car.speed = 120;
+                        }
+                        
+                        __PUMP2.occupied = !__PUMP2.occupied;
+                        __PUMP2_LIGHT.color = rgb(0,255,0);
+                    }
+                });
+            }
         }
     })
 
@@ -490,6 +617,20 @@ export default function _GAME_DESERT (PLAYER_DATA) {
                 car.isFueled = true;
                 car.clicked = false;
                 car.play("idle", {animSpeed: .4});
+
+                let emote = add([
+                    sprite("game-lost"),
+                    pos(200,200),
+                    scale(1.4),
+                    layer('ui'),
+                    follow(car, vec2(25,-25))
+                ])
+
+                wait(1.3, () => {
+                    destroy(emote);
+                })
+
+
                 if(car.is("sport")){
                     car.speed = 200;
                 }
@@ -540,6 +681,18 @@ export default function _GAME_DESERT (PLAYER_DATA) {
                 car.isFueled = true;
                 car.clicked = false;
                 car.play("idle", {animSpeed: .4});
+
+                let emote = add([
+                    sprite("game-won"),
+                    pos(200,200),
+                    scale(1.4),
+                    layer('ui'),
+                    follow(car, vec2(25,-25))
+                ])
+
+                wait(1.3, () => {
+                    destroy(emote);
+                })
 
                 if(car.is("sport")){
                     car.speed = 200;
