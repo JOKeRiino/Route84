@@ -40,12 +40,12 @@ Base for a Gas Station Tycoon Game.
 - Fixed the Shop bug
 - Added tutorial on GameStart
 
-0.6
+0.6.2
 ` Added Story capabilities `
 - Added INTRO story
+- Added Bird
 
 //TODO
 
-- Add Story capabilities
-- Add Story (add mayor and debt system)
+Add mayor and debt system
 (Add rep system that kills the game if rep too low)
