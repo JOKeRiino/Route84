@@ -4,16 +4,19 @@ import _GAME_DESERT from "./js/scenes/game-desert.js";
 import _HOME from "./js/scenes/home.js";
 import _PAUSE from "./js/scenes/pause.js";
 import _SHOP from "./js/scenes/shop.js";
+import _TUTORIAL from "./js/scenes/tutorial.js";
+import _STORY from "./js/scenes/story.js";
 
 const PLAYER_DATA = {
     'NEWGAME': true,
-    'SCORE' : 215,
+    'SCORE' : 13900,
     'IS_NIGHT': false,
     'ASSETS_NIGHT': false,
     'GAME_HOUR' : 5,
     'GAME_DAY' : 1,
     'LVL' : 1,
     'XP': 0,
+    'TUTORIAL': true,
     'INVENTORY': {
         'CHAPTER1' : [
             { //pumps
@@ -65,10 +68,15 @@ const PLAYER_DATA = {
         'CHAPTER3': {}
     },
     'STORY': {
-        'INTRO': {},
-        'CHAPTER1': {},
-        'CHAPTER2': {},
-        'CHAPTER3': {},
+        'INTRO': {
+            played: false
+        },
+        'MAYOR': {
+            played: false
+        },
+        'CLERK': {
+            played: false
+        }
     }
 }
 //_K.debug.inspect = true;
@@ -76,7 +84,14 @@ const PLAYER_DATA = {
 // LOAD ASSETS
 loadSprite('bg-day', 'src/backgrounds/finalDay.PNG'); //TODO CHANGE SPRITE TO OWN
 loadSprite('bg-night', 'src/backgrounds/finalNight.PNG'); //TODO CHANGE SPRITE TO OWN
-
+loadSprite('bird', 'src/assets/bird.png', { //OWN SPRITE
+    sliceX: 4,
+    anims:{fly:{from:0, to:3, loop:true}}
+})
+loadSprite('letter', 'src/assets/letter.png', { //OWN SPRITE
+    sliceX: 4,
+    anims:{open:{from:0, to:3, loop:false}}
+})
 loadSpriteAtlas('src/house/house-bitmap.png', { //OWN SPRITE
     "house-c1-u1-day": {
         x:0,
@@ -293,6 +308,7 @@ loadSprite('home-bg', 'src/backgrounds/ezgif.com-gif-maker.png', { //OWN SPRITE
 });
 loadSprite('shopkeeper', 'src/people/shopkeeper.png'); //OWN SPRITE
 loadSprite('jacob', 'src/people/jacob.png'); //OWN SPRITE
+loadSprite('mom', 'src/people/mom.png'); //OWN SPRITE
 loadSprite('speech', 'src/gui/comic-2.png');
 //UI Sprite Atlas
 loadSpriteAtlas("src/gui/GUI.png", { //TODO CHANGE SPRITE TO OWN?!
@@ -349,6 +365,12 @@ loadSpriteAtlas("src/gui/GUI.png", { //TODO CHANGE SPRITE TO OWN?!
         y: 0,
         width: 5,
         height: 16
+    },
+    "forward": {
+        x:128,
+        y:240,
+        width: 16,
+        height: 16
     }
 })
 
@@ -357,7 +379,9 @@ _K.scene('game-desert', _GAME_DESERT);
 _K.scene('pause', _PAUSE);
 _K.scene('home', _HOME);
 _K.scene('shop', _SHOP);
-//_K.scene('story', _STORY);
+_K.scene('story', _STORY);
+_K.scene('tutorial', _TUTORIAL);
 
 _K.go('home',PLAYER_DATA);
+//_K.go('story',PLAYER_DATA);
 //_K.go('game-desert',PLAYER_DATA);

@@ -178,7 +178,21 @@ export default function _GAME_DESERT (PLAYER_DATA) {
             cursor: 'pointer'
         })
     ])
+    add([
+        sprite('shop-button'),
+        pos(130,30),
+        layer('ui'),
+        scale(2,1.6),
+        "debt",
+        area({
+            width: 30,
+            height: 16,
+            offset: vec2(2,0),
+            cursor: 'pointer'
+        })
+    ])
     add([text("SHOP"),pos(73,33),layer('ui'),scale(.25)]);
+    add([text("DEBT"),pos(140,33),layer('ui'),scale(.25)]);
     add([
         sprite("level-bar"),
         pos(139,-10),
@@ -201,9 +215,9 @@ export default function _GAME_DESERT (PLAYER_DATA) {
     ])
     let UI_LVL_COUNT = add([
         text("LVL: " +PLAYER_DATA.LVL),
-        pos(168,20),
+        pos(166,17),
         layer('ui'),
-        scale(.2),
+        scale(.19),
         color(180,232,245),
     ])
 
@@ -386,7 +400,7 @@ export default function _GAME_DESERT (PLAYER_DATA) {
             __PUMP2_LIGHT.color = rgb(255,0,0);
 
             //IF CLERK EXISTS CAR GETS REFUELED AUTOMATICALLY!
-            if(PLAYER_DATA.INVENTORY.CHAPTER1[1].ammount = 1){
+            if(PLAYER_DATA.INVENTORY.CHAPTER1[1].amount === 1){
                 car.clicked = true;
                 console.log("clerk refueles car!")
                 wait(2, () => {
@@ -723,6 +737,9 @@ export default function _GAME_DESERT (PLAYER_DATA) {
     })
     clicks("shop", () => {
         go("shop", PLAYER_DATA);
+    })
+    clicks("debt", () => {
+        //go("debt", PLAYER_DATA);
     })
 }
 

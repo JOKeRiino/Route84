@@ -31,13 +31,21 @@ Base for a Gas Station Tycoon Game.
 - Changed respawn on player cars
 - All car props change according to day/night cycle
 
-0.5.2
+0.5.5
 ` Added level and xp system that continuously raises fuelprices `
 - Day/Night switch bug fixed as of now
 - Added Clerk functionality without simple sprite
 - Added Driver Emotions
+- Fixed the Pump2 Clerk Bug
+- Fixed the Shop bug
+- Added tutorial on GameStart
+
+0.6
+` Added Story capabilities `
+- Added INTRO story
 
 //TODO
 
 - Add Story capabilities
 - Add Story (add mayor and debt system)
+(Add rep system that kills the game if rep too low)
