@@ -207,7 +207,10 @@ export default function _SHOP (PLAYER_DATA) {
 
     //MAKE CLERK AVAILABLE WHEN SECOND PUMP IS BOUGHT
     action("sb_2", (b) => {
-        if(pD[0].available === 0 && pD[1].available != 0){
+        if(pD[1].available != 0 && PLAYER_DATA.SCORE < pD[1].price) {
+            b.color = rgb(255,0,0,.3)
+        }
+        else if(pD[0].available === 0 && pD[1].available != 0){
             b.color = rgb(0,255,0,.3);
             b.area.width = 46;
             b.area.height = 14;
@@ -221,7 +224,10 @@ export default function _SHOP (PLAYER_DATA) {
 
     //MAKE CLERK UPDATES AVAILABLE WHEN CLERK IS BOUGHT
     action("sb_3", (b) => {
-        if(pD[1].available === 0 && pD[2].available != 0){
+        if(pD[2].available != 0 && PLAYER_DATA.SCORE < pD[2].price * PLAYER_DATA.INVENTORY.CHAPTER1[1].lvl) {
+            b.color = rgb(255,0,0,.3)
+        }
+        else if(pD[1].available === 0 && pD[2].available != 0){
             b.color = rgb(0,255,0,.3)
             b.area.width = 46;
             b.area.height = 14;
