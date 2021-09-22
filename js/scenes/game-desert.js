@@ -25,6 +25,35 @@ export default function _GAME_DESERT (PLAYER_DATA) {
         layer('obj'),
         scale(1.8,1.9),
     ])
+    loop(180, () => {
+        if(Math.random() < .01){
+            add([
+                sprite("bird", {
+                    anim: "fly",
+                    speed: 1
+                }),
+                pos(-50,100),
+                layer('bg'),
+                scale(1.3),
+                area(),
+                "bird",
+                {
+                    dir: vec2(1,0),
+                    secdir: vec2(.2,1.2),
+                    speed: 140,
+                    clicked: false
+                }
+            ])
+        }
+    })
+    action("bird", (b) => {
+        if(b.clicked === false){
+            b.move(b.dir.scale(b.speed));
+            if (b.pos.x > 800) {
+                destroy(b);
+            }
+        }
+    })
 
     //OBJ1 SPRITES
     let __STREET = add([
@@ -740,6 +769,17 @@ export default function _GAME_DESERT (PLAYER_DATA) {
     })
     clicks("debt", () => {
         //go("debt", PLAYER_DATA);
+    })
+    clicks("bird", (b) => {
+        b.clicked = true;
+        b.stop();
+        PLAYER_DATA.SCORE += 1000;
+        action('bird', () => {
+            b.move(b.secdir.scale(b.speed));
+        })
+        if (b.pos.y > 200) {
+            destroy(b);
+        }
     })
 }
 

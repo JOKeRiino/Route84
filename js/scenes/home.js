@@ -39,7 +39,7 @@ export default function _HOME (PLAYER_DATA) {
     add([ text("Load Game"),pos(285,229),layer("ui"),scale(.33)]);
 
     clicks("startgame", () => {
-        _K.go('story',PLAYER_DATA);
+        _K.go('story',PLAYER_DATA); //LAUNCH STORYMODE
     })
 
     clicks("loadgame", () => {
