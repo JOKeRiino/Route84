@@ -382,7 +382,7 @@ _K.scene('shop', _SHOP);
 _K.scene('story', _STORY);
 _K.scene('tutorial', _TUTORIAL);
 
-//_K.go('home',PLAYER_DATA);
+_K.go('home',PLAYER_DATA);
 //_K.go('story',PLAYER_DATA);
 //
-_K.go('game-desert',PLAYER_DATA);
+//_K.go('game-desert',PLAYER_DATA);
