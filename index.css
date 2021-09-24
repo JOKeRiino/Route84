@@ -4,18 +4,29 @@
     font-size: 13px;
 }
 
+.header {
+    order: 1;
+    margin: 20px 0;
+    padding-top: 40px;
+}
+
 body {
     background-color: #1d1b33;
     padding-top: 60px;
     display: flex;
-    flex-direction: column-reverse;
+    flex-direction: column;
     justify-content: center;
     align-items:center;
+}
+
+canvas {
+    order: 2;
 }
 
 .text {
     background-color: #1d1b33;
     padding-top: 60px;
+    order: 3;
 }
 
 ul {
