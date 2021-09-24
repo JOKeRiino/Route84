@@ -118,15 +118,23 @@ export default function _GAME_DESERT (PLAYER_DATA) {
         sprite('clerk', {
             flipX: true
         }),
-        pos(294,269),
+        pos(294,255),
         layer('obj'),
-        scale(2),
+        scale(1.2),
         "clerk"
+    ])
+    let __MAYOR = add([
+        sprite('mayor-day'),
+        pos(90,255),
+        area(),
+        'mayor',
+        scale(1.2)
     ])
     //hide the second gas pump
     every("amount2", (obj) => {obj.hidden = true;})
     //hide the clerk
     __CLERK.hidden = true;
+    __MAYOR.hidden = true;
 
 
     //UI SPRITES
@@ -207,21 +215,20 @@ export default function _GAME_DESERT (PLAYER_DATA) {
             cursor: 'pointer'
         })
     ])
-    add([
+    let debtbutton = add([
         sprite('shop-button'),
         pos(130,30),
         layer('ui'),
         scale(2,1.6),
         "debt",
-        area({
-            width: 30,
-            height: 16,
-            offset: vec2(2,0),
-            cursor: 'pointer'
-        })
+        area()
     ])
     add([text("SHOP"),pos(73,33),layer('ui'),scale(.25)]);
-    add([text("DEBT"),pos(140,33),layer('ui'),scale(.25)]);
+    let debttxt = add([text("DEBT"),pos(140,33),layer('ui'),scale(.25)]);
+    debtbutton.hidden = true;
+    debtbutton.area.width = 0;
+    debtbutton.area.height = 0;
+    debttxt.hidden = true;
     add([
         sprite("level-bar"),
         pos(139,-10),
@@ -273,6 +280,38 @@ export default function _GAME_DESERT (PLAYER_DATA) {
             })
         }
     })
+
+    if(PLAYER_DATA.STORY.MAYOR.played === true){
+        debtbutton.hidden = false;
+        debtbutton.area.width = 30;
+        debtbutton.area.height = 16;
+        debttxt.hidden = false; 
+    }
+
+    //ADD BUTTON IF DEBT IS PAID
+    if(PLAYER_DATA.DEBT === 0){
+        debtbutton.hidden = true;
+        debtbutton.area.width = 0;
+        debtbutton.area.height = 0;
+        debttxt.hidden = true;
+
+        add([
+            sprite('shop-button'),
+            pos(130,30),
+            layer('ui'),
+            scale(4,1.6),
+            "endchapter",
+            area({
+                cursor: 'pointer'
+            })
+        ])
+        add([text("END CHAPTER"),pos(140,33),layer('ui'),scale(.22)]);
+
+        clicks("endchapter", () => {
+            //gameend
+            _K.go("game-end", PLAYER_DATA);
+        })
+    }
 
     //SPAWN CARS IN LOOP
     loop(Math.floor((Math.random() * (60 - 22) + 22)), () => {
@@ -340,9 +379,20 @@ export default function _GAME_DESERT (PLAYER_DATA) {
         if(PLAYER_DATA.GAME_HOUR === 23){
             PLAYER_DATA.GAME_HOUR = 0;
             PLAYER_DATA.GAME_DAY++;
+            if(PLAYER_DATA.GAME_DAY===31 && PLAYER_DATA.DEBT > 0){
+                _K.go("game-over",PLAYER_DATA);
+            }
             UI_CAL.text = PLAYER_DATA.GAME_DAY +'.Day'
         } else {
             PLAYER_DATA.GAME_HOUR++;
+        }
+
+        if(PLAYER_DATA.GAME_DAY >= 2 && PLAYER_DATA.STORY.MAYOR.played === false){
+            __MAYOR.hidden = false;
+
+            clicks("mayor", () => {
+                _K.go("story", PLAYER_DATA);
+            })
         }
 
         if(PLAYER_DATA.GAME_HOUR > 19 || PLAYER_DATA.GAME_HOUR < 6){
@@ -768,7 +818,7 @@ export default function _GAME_DESERT (PLAYER_DATA) {
         go("shop", PLAYER_DATA);
     })
     clicks("debt", () => {
-        //go("debt", PLAYER_DATA);
+        go("debt", PLAYER_DATA);
     })
     clicks("bird", (b) => {
         b.clicked = true;
@@ -777,6 +827,26 @@ export default function _GAME_DESERT (PLAYER_DATA) {
         action('bird', () => {
             b.move(b.secdir.scale(b.speed));
         })
+
+        let UI_BIRDPAY = add([
+            text('$ 1000'),
+            pos(b.pos.x, b.pos.y),
+            layer('ui'),
+            scale(.3),
+            area(),
+            color(0,255,0),
+            {
+                dir: vec2(0,-1),
+                speed: 140,
+            }
+        ])
+        UI_BIRDPAY.action(() => {
+            UI_BIRDPAY.move(UI_BIRDPAY.dir.scale(UI_BIRDPAY.speed));
+        })
+        wait(.4, () => {
+            destroy(UI_BIRDPAY);
+        })
+
         if (b.pos.y > 200) {
             destroy(b);
         }

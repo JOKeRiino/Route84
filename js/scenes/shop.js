@@ -251,6 +251,7 @@ export default function _SHOP (PLAYER_DATA) {
         if(PLAYER_DATA.SCORE >= button.cost && button.available > 0){
             PLAYER_DATA.SCORE -= button.cost;
             pD[index].available -= 1;
+            PLAYER_DATA.ITEMSBOUGHT++;
             //TODO Hier kommen die dinge hin die sich verändern nach dem kauf!
             if(index == 0) {
                 inventory[0].amount++;

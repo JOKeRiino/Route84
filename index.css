@@ -1,7 +1,18 @@
+* {
+    font-family: sans-serif;
+    color: rgb(233, 233, 233);
+}
+
 body {
     background-color: #1d1b33;
     padding-top: 60px;
     display: flex;
+    flex-direction: column-reverse;
     justify-content: center;
-    align-items: flex-start;
+    align-items:center;
+}
+
+.text {
+    background-color: #1d1b33;
+    padding-top: 60px;
 }
