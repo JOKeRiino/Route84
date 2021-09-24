@@ -19,7 +19,7 @@ const PLAYER_DATA = {
     'GAME_DAY' : 1,
     'LVL' : 1,
     'XP': 0,
-    'DEBT': 15000,
+    'DEBT': 23000,
     'TUTORIAL': true,
     'ITEMSBOUGHT': 0,
     'INVENTORY': {

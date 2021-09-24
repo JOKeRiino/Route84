@@ -16,3 +16,11 @@ body {
     background-color: #1d1b33;
     padding-top: 60px;
 }
+
+ul {
+    list-style-type:decimal;
+}
+
+li {
+    padding: 10px 0;
+}

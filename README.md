@@ -1,4 +1,4 @@
-# littlegasstation
+# Route84
 
 An unsophisticated DEMO of the kaboom.js library.
 Base for a Gas Station Tycoon Game.
@@ -48,8 +48,9 @@ Base for a Gas Station Tycoon Game.
 - Added Game Won/Loose Screen
 - Added Mayor and Debt System
 
-0.7.0
+0.7.1
 ` ALPHA VERSION IS FINISHED `
+- Minor bugfixes
 
 //TODO
 (Add rep system that kills the game if rep too low)
