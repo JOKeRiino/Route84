@@ -6,17 +6,22 @@ import _PAUSE from "./js/scenes/pause.js";
 import _SHOP from "./js/scenes/shop.js";
 import _TUTORIAL from "./js/scenes/tutorial.js";
 import _STORY from "./js/scenes/story.js";
+import _DEBT from "./js/scenes/debt.js";
+import _GAMEEND from "./js/scenes/game-end.js";
+import _GAMEOVER from "./js/scenes/game-over.js";
 
 const PLAYER_DATA = {
     'NEWGAME': true,
-    'SCORE' : 13900,
+    'SCORE' : 211,
     'IS_NIGHT': false,
     'ASSETS_NIGHT': false,
-    'GAME_HOUR' : 5,
+    'GAME_HOUR' : 5,//5
     'GAME_DAY' : 1,
     'LVL' : 1,
     'XP': 0,
+    'DEBT': 15000,
     'TUTORIAL': true,
+    'ITEMSBOUGHT': 0,
     'INVENTORY': {
         'CHAPTER1' : [
             { //pumps
@@ -69,7 +74,7 @@ const PLAYER_DATA = {
     },
     'STORY': {
         'INTRO': {
-            played: false
+            played: false //false
         },
         'MAYOR': {
             played: false
@@ -310,6 +315,21 @@ loadSprite('shopkeeper', 'src/people/shopkeeper.png'); //OWN SPRITE
 loadSprite('jacob', 'src/people/jacob.png'); //OWN SPRITE
 loadSprite('mom', 'src/people/mom.png'); //OWN SPRITE
 loadSprite('speech', 'src/gui/comic-2.png');
+loadSpriteAtlas('src/people/mayorsprites.png', { //OWN SPRITE
+    'mayor-day': {
+        x: 0,
+        y: 0,
+        width: 32,
+        height: 64
+    },
+    'mayor-night': {
+        x: 32,
+        y: 0,
+        width: 32,
+        height: 64
+    }
+})
+loadSprite('mayor', 'src/people/mayor.png'); //OWN SPRITES
 //UI Sprite Atlas
 loadSpriteAtlas("src/gui/GUI.png", { //TODO CHANGE SPRITE TO OWN?!
     "pause-button": {
@@ -371,6 +391,12 @@ loadSpriteAtlas("src/gui/GUI.png", { //TODO CHANGE SPRITE TO OWN?!
         y:240,
         width: 16,
         height: 16
+    },
+    "backward": {
+        x:63,
+        y:240,
+        width: 16,
+        height: 16
     }
 })
 
@@ -381,8 +407,10 @@ _K.scene('home', _HOME);
 _K.scene('shop', _SHOP);
 _K.scene('story', _STORY);
 _K.scene('tutorial', _TUTORIAL);
+_K.scene('debt', _DEBT);
+_K.scene('game-end', _GAMEEND);
+_K.scene('game-over', _GAMEOVER);
 
 _K.go('home',PLAYER_DATA);
-//_K.go('story',PLAYER_DATA);
-//
 //_K.go('game-desert',PLAYER_DATA);
+//_K.go('game-over',PLAYER_DATA);
