@@ -419,7 +419,7 @@ export default function _STORY (PLAYER_DATA) {
                                         })
 
                                         add([
-                                            text("Not that much...\n$15,000!"),
+                                            text("Not that much...\n$23,000!"),
                                             pos(280,180),
                                             layer('ui'),
                                             scale(.25),
@@ -428,7 +428,7 @@ export default function _STORY (PLAYER_DATA) {
                 
                                         wait(1, () => {
                                             add([
-                                                text("15,000?!?\nHow am I supposed to pay\nthat?!"),
+                                                text("23,000?!?\nHow am I supposed to pay\nthat?!"),
                                                 pos(160,280),
                                                 scale(.25),
                                                 "speech5"
