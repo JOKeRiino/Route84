@@ -2,6 +2,7 @@
 import kaboom from "https://unpkg.com/kaboom@next/dist/kaboom.mjs";
 
 export const k = kaboom({
+    root: document.querySelector("#game"),
     global: true,
     fullscreen: false,
     width: 700,
