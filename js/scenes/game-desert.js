@@ -850,6 +850,9 @@ export default function _GAME_DESERT (PLAYER_DATA) {
         if (b.pos.y > 200) {
             destroy(b);
         }
+
+        UI_CASHLABEL.text = '$' + PLAYER_DATA.SCORE;
+        PLAYER_DATA.XP += 69;
     })
 }
 
