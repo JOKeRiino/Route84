@@ -48,9 +48,10 @@ Base for a Gas Station Tycoon Game.
 - Added Game Won/Loose Screen
 - Added Mayor and Debt System
 
-0.7.1
+0.7.2
 ` ALPHA VERSION IS FINISHED `
 - Minor bugfixes
+- New website version
 
 //TODO
 (Add rep system that kills the game if rep too low)
