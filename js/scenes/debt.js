@@ -92,6 +92,11 @@ export default function _DEBT (PLAYER_DATA) {
             PLAYER_DATA.DEBT -= pA;
             PLAYER_DATA.SCORE -= pA;
             PLAYER_DATA.XP += (pA / 10);
+            if(PLAYER_DATA.GAME_HOUR > 19 || PLAYER_DATA.GAME_HOUR < 6){
+                PLAYER_DATA.ASSETS_NIGHT = false
+            } else {
+                PLAYER_DATA.ASSETS_NIGHT = true
+            }
             _K.go('game-desert', PLAYER_DATA);
         }
     })

@@ -12,7 +12,7 @@ import _GAMEOVER from "./js/scenes/game-over.js";
 
 const PLAYER_DATA = {
     'NEWGAME': true,
-    'SCORE' : 211,
+    'SCORE' : 200000,
     'IS_NIGHT': false,
     'ASSETS_NIGHT': false,
     'GAME_HOUR' : 5,//5
@@ -46,27 +46,27 @@ const PLAYER_DATA = {
             { //pumps
                 'name': 'Second Pump',
                 'available': 1,
-                'price' : 5000,
+                'price' : 2000,
             },
             { //clerk
                 'name': 'Hire Clerk',
                 'available': 1,
-                'price' : 8000,
+                'price' : 3500,
             },
             { //clerkupdate
                 'name': 'Train Clerk',
                 'available': 9,
-                'price' : 500
+                'price' : 400
             },
             { //house
                 'name': 'Upgrade the House',
                 'available' : 2,
-                'price' : 10000,
+                'price' : 5000,
             },
             { //cleandirt
                 'name': 'Clean the station',
                 'available' : 1,
-                'price' : 500,
+                'price' : 600,
             }
         ],
         'CHAPTER2': {},

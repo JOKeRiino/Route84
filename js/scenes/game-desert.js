@@ -4,12 +4,17 @@ export default function _GAME_DESERT (PLAYER_DATA) {
     //! CHECK IF NEW GAME
     if(!PLAYER_DATA.NEWGAME){
         PLAYER_DATA.GAME_HOUR--;
+        if(PLAYER_DATA.GAME_HOUR > 19 || PLAYER_DATA.GAME_HOUR < 6){
+            PLAYER_DATA.ASSETS_NIGHT = false
+        } else {
+            PLAYER_DATA.ASSETS_NIGHT = true
+        }
     }
     if(PLAYER_DATA.NEWGAME){
         PLAYER_DATA.NEWGAME = false;
     }
 
-    gravity(950);
+    gravity(900);
     layers(['bg', 'obj', 'obj2', 'ui'], 'obj')  
 
     //BG SPRITES
@@ -281,14 +286,25 @@ export default function _GAME_DESERT (PLAYER_DATA) {
         }
     })
 
+    //! CHANGE SPRITES ACCORDING TO PLAYER INVENTORY (BOUGHT ITEMS)
+    const inventory = PLAYER_DATA.INVENTORY.CHAPTER1
+    if(inventory[0].amount == 2) {
+        every("amount2", (obj) => {obj.hidden = false;});
+        __PUMP2.area.height = 50;
+        __PUMP2.area.width = 5;
+    }
+    if(inventory[1].amount == 1) {
+        __CLERK.hidden = false;
+    }
+    if(inventory[3].lvl == 2){
+        __DUMPSTER.hidden = true;
+    }
     if(PLAYER_DATA.STORY.MAYOR.played === true){
         debtbutton.hidden = false;
         debtbutton.area.width = 30;
         debtbutton.area.height = 16;
         debttxt.hidden = false; 
     }
-
-    //ADD BUTTON IF DEBT IS PAID
     if(PLAYER_DATA.DEBT === 0){
         debtbutton.hidden = true;
         debtbutton.area.width = 0;
@@ -311,66 +327,6 @@ export default function _GAME_DESERT (PLAYER_DATA) {
             //gameend
             _K.go("game-end", PLAYER_DATA);
         })
-    }
-
-    //SPAWN CARS IN LOOP
-    loop(Math.floor((Math.random() * (60 - 22) + 22)), () => {
-        if(get("car").length < 3) {
-            if(PLAYER_DATA.IS_NIGHT){
-                createRandomCarNight();
-            }
-            else {
-                createRandomCar();
-            }
-        }
-    })
-    //Lets all Cars drive and destroy cars that drive out of screen
-    action("car", (car) => {
-        car.move(car.dir.scale(car.speed));
-        if (car.pos.x < -150) {
-            destroy(car);
-            wait(Math.floor(Math.random() * (5 - 1) + 1), () => {
-                if(PLAYER_DATA.IS_NIGHT){
-                    createRandomCarNight();
-                }
-                else {
-                    createRandomCar();
-                }
-            })
-        }
-    })
-
-    //SPAWN FILLER CARS IN LOOP
-    loop(Math.floor((Math.random() * (20 - 5) + 5)), () => {
-        if(get("filler").length < 2) {
-            if(PLAYER_DATA.IS_NIGHT){
-                createFillerCarNight();
-            }
-            else {
-                createFillerCar();
-            }
-        }
-    })
-    //Lets filler cars drive and destroys them if they drive out of screen
-    action("filler", (car) => {
-        car.move(car.dir.scale(car.speed));
-        if (car.pos.x > 700) {
-            destroy(car);
-        }
-    })
-
-    //! CHANGE SPRITES ACCORDING TO PLAYER INVENTORY (BOUGHT ITEMS)
-    const inventory = PLAYER_DATA.INVENTORY.CHAPTER1
-    if(inventory[0].amount == 2) {
-        every("amount2", (obj) => {obj.hidden = false;});
-        __PUMP2.area.height = 50;
-        __PUMP2.area.width = 5;
-    }
-    if(inventory[1].amount == 1) {
-        __CLERK.hidden = false;
-    }
-    if(inventory[3].lvl == 2){
-        __DUMPSTER.hidden = true;
     }
 
 
@@ -460,7 +416,50 @@ export default function _GAME_DESERT (PLAYER_DATA) {
         UI_CLOCK.text = PLAYER_DATA.GAME_HOUR + ':00 ';
     })
 
+    //CAR SPAWNERS
+    loop(Math.floor((Math.random() * (60 - 22) + 22)), () => {
+        if(get("car").length < 3) {
+            if(PLAYER_DATA.IS_NIGHT){
+                createRandomCarNight();
+            }
+            else {
+                createRandomCar();
+            }
+        }
+    })
+    action("car", (car) => {
+        car.move(car.dir.scale(car.speed));
+        if (car.pos.x < -150) {
+            destroy(car);
+            wait(Math.floor(Math.random() * (5 - 1) + 1), () => {
+                if(PLAYER_DATA.IS_NIGHT){
+                    createRandomCarNight();
+                }
+                else {
+                    createRandomCar();
+                }
+            })
+        }
+    })
+    //Filler cars
+    loop(Math.floor((Math.random() * (20 - 5) + 5)), () => {
+        if(get("filler").length < 2) {
+            if(PLAYER_DATA.IS_NIGHT){
+                createFillerCarNight();
+            }
+            else {
+                createFillerCar();
+            }
+        }
+    })
+    action("filler", (car) => {
+        car.move(car.dir.scale(car.speed));
+        if (car.pos.x > 700) {
+            destroy(car);
+        }
+    })
 
+    //COLLIDERS
     __PUMP.collides("car", (car) => {
         if(!__PUMP.occupied && Math.random() >= .05){
             car.stop();
@@ -659,7 +658,9 @@ export default function _GAME_DESERT (PLAYER_DATA) {
                     width: 20,
                     offset: vec2(9,-1)
                 }),
-                body(),
+                body({
+                    weight: 0
+                }),
                 "mg",
                 "fuel"
             ])
@@ -695,7 +696,13 @@ export default function _GAME_DESERT (PLAYER_DATA) {
             function jump() {
                 fuel.jump(130);
             }
-            keyPress("space", jump);
+            keyPress("space", () => {
+                if(fuel.weight === 0){
+                    fuel.weight = .8
+                } else {
+                    jump();
+                }
+            });
             //! CHECK THE STATUS OF THE GOAL
             loop(.2, () => {            
                     if (fuel.isColliding(goal)) {
@@ -747,6 +754,7 @@ export default function _GAME_DESERT (PLAYER_DATA) {
             })
             //! END THE GAME IF THE LIFE OF GOAL GETS SMALLER THAN 1
             goal.on("death", () => {
+
                 every("mg", destroy);
                 console.log("game won");
 
