@@ -524,6 +524,11 @@ export default function _STORY (PLAYER_DATA) {
                                                                     });
     
                                                                     PLAYER_DATA.STORY.MAYOR.played = true;
+                                                                    if(PLAYER_DATA.GAME_HOUR > 19 || PLAYER_DATA.GAME_HOUR < 6){
+                                                                        PLAYER_DATA.ASSETS_NIGHT = false
+                                                                    } else {
+                                                                        PLAYER_DATA.ASSETS_NIGHT = true
+                                                                    }
                                                                     _K.go("game-desert", PLAYER_DATA);
                                                                 })
                                                             })

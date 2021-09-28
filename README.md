@@ -54,5 +54,11 @@ Base for a Gas Station Tycoon Game.
 - New website version
 - Bird bug fixed
 
+0.8.3
+` FIRST USER TEST `
+- Minigame start only after pressing spacebar once
+- Upgrades are now a lot cheaper!
+- Day/Night bug fixed after Mayor story and debt menu
+
 //TODO
 (Add rep system that kills the game if rep too low)
