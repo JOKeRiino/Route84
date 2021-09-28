@@ -12,7 +12,7 @@ import _GAMEOVER from "./js/scenes/game-over.js";
 
 const PLAYER_DATA = {
     'NEWGAME': true,
-    'SCORE' : 200000,
+    'SCORE' : 196,
     'IS_NIGHT': false,
     'ASSETS_NIGHT': false,
     'GAME_HOUR' : 5,//5
